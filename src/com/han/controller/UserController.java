@@ -26,5 +26,12 @@ public class UserController {
         return userService.userInsert(user);
     }
 
+    public Object[][] userList() {
+        return userService.userList();
+    }
+    public int userUpdateByAccount(User user) {
+        return userService.userUpdateByAccount(user);
+    }
+
 
 }

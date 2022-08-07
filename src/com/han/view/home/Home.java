@@ -17,11 +17,12 @@ import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
 import com.han.pojo.User;
+import com.han.view.home.internal_frame.AddAccountFrame;
+import com.han.view.home.internal_frame.UpdateAccountFrame;
 import com.han.view.imagepanel.HomePanel;
 import com.han.view.login.Login;
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
-import java.awt.SystemColor;
 import java.awt.Color;
 
 public class Home extends JFrame {
@@ -156,29 +157,29 @@ public class Home extends JFrame {
 	 * 菜单项的事件监听器
 	 */
 	public void setOncListener() {
-//		mntmNewMenuItem_input.addActionListener(new ActionListener() {
-//
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				System.out.println("录入成功");
-//				jInternalFrame_input jinput = new jInternalFrame_input();
-//				JInternalFrame internalFrame = jinput.init();
-//				panel.add(internalFrame, BorderLayout.CENTER);
-//				internalFrame.setVisible(true);
-//			}
-//		});
-//		mntmNewMenuItem_deal.addActionListener(new ActionListener() {
-//
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				// TODO Auto-generated method stub
-//				System.out.println("处理成功");
-//				jInternalFrame_query jquery = new jInternalFrame_query();
-//				JInternalFrame internalFrame = jquery.init();
-//				panel.add(internalFrame, BorderLayout.CENTER);
-//				internalFrame.setVisible(true);
-//			}
-//		});
+		jMenuItemAddAccount.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("录入成功");
+				AddAccountFrame AccountFrame = new AddAccountFrame();
+				JInternalFrame addAccountFrame = AccountFrame.init();
+				panel.add(addAccountFrame, BorderLayout.CENTER);
+				addAccountFrame.setVisible(true);
+			}
+		});
+		jMenuItemUpdateAccount.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("处理成功");
+				UpdateAccountFrame jquery = new UpdateAccountFrame();
+				JInternalFrame updateAccountFrame = jquery.init();
+				panel.add(updateAccountFrame, BorderLayout.CENTER);
+				updateAccountFrame.setVisible(true);
+			}
+		});
 //		mntmNewMenuItem_pmanage.addActionListener(new ActionListener() {
 //
 //			@Override

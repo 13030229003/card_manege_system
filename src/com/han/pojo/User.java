@@ -19,7 +19,86 @@ public class User {
 
     private String identity;
 
+    /**
+     * 总信用额 = 可用信用 + 预存信用
+     */
+    private String totalCredit;
+
+    /**
+     * 可用信用默认为5k
+     */
+    private String availableCredit;
+
+    /**
+     * 可取信用额 = 可用信用额 除以 1.1
+     */
+    private String desirableCredit;
+
+    /**
+     * 欠款金额
+     */
+    private String arrearsAmount;
+
+    /**
+     * 预存金额
+     */
+    private String storageAmount;
+
+    /**
+     * 注册时间
+     */
+    private String registerTime;
+
+
     private String status;
+
+    public String getTotalCredit() {
+        return totalCredit;
+    }
+
+    public void setTotalCredit(String totalCredit) {
+        this.totalCredit = totalCredit;
+    }
+
+    public String getAvailableCredit() {
+        return availableCredit;
+    }
+
+    public void setAvailableCredit(String availableCredit) {
+        this.availableCredit = availableCredit;
+    }
+
+    public String getDesirableCredit() {
+        return desirableCredit;
+    }
+
+    public void setDesirableCredit(String desirableCredit) {
+        this.desirableCredit = desirableCredit;
+    }
+
+    public String getArrearsAmount() {
+        return arrearsAmount;
+    }
+
+    public void setArrearsAmount(String arrearsAmount) {
+        this.arrearsAmount = arrearsAmount;
+    }
+
+    public String getStorageAmount() {
+        return storageAmount;
+    }
+
+    public void setStorageAmount(String storageAmount) {
+        this.storageAmount = storageAmount;
+    }
+
+    public String getRegisterTime() {
+        return registerTime;
+    }
+
+    public void setRegisterTime(String registerTime) {
+        this.registerTime = registerTime;
+    }
 
     public String getAccount() {
         return account;
@@ -58,6 +137,12 @@ public class User {
                 ", account='" + account + '\'' +
                 ", password='" + password + '\'' +
                 ", identity='" + identity + '\'' +
+                ", totalCredit='" + totalCredit + '\'' +
+                ", availableCredit='" + availableCredit + '\'' +
+                ", desirableCredit='" + desirableCredit + '\'' +
+                ", arrearsAmount='" + arrearsAmount + '\'' +
+                ", storageAmount='" + storageAmount + '\'' +
+                ", registerTime='" + registerTime + '\'' +
                 ", status='" + status + '\'' +
                 '}';
     }

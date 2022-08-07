@@ -1,5 +1,7 @@
 package com.han.test;
 
+import com.han.controller.UserController;
+
 /**
  * @PACKAGE_NAME: com.han.test
  * @Author XSH
@@ -10,8 +12,9 @@ package com.han.test;
 public class TestView {
 
     public static void main(String[] args) {
-//        new Login_111();
-//        new Register();
+
+        new UserController().userList();
+
     }
 
 }
