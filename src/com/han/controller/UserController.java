@@ -33,5 +33,13 @@ public class UserController {
         return userService.userUpdateByAccount(user);
     }
 
+    public Object[][] userListByLike(String like) {
+        return userService.userListByLike(like);
+    }
+
+    public int userDelete(User user) {
+        return userService.userDelete(user);
+    }
+
 
 }

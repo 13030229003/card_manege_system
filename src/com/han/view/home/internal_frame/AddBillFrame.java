@@ -1,92 +1,81 @@
 package com.han.view.home.internal_frame;
 
+import com.han.controller.BillController;
 import com.han.controller.UserController;
+import com.han.pojo.Bill;
 import com.han.pojo.User;
 import com.han.view.imagepanel.HomePanel;
 import com.han.view.imagepanel.MyTable;
 
-import javax.swing.JInternalFrame;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-
-import javax.swing.ImageIcon;
-
-import java.awt.event.ActionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class AddAccountFrame {
+public class AddBillFrame {
+
+	private User user;
+
 	private static JTextField textField_name;
 	private static JTextField textField_account;
-	private static JTextField textField_password;
+	private static JTextField textField_add_bill;
 	private static JPanel panel;
 	private static JPanel panel_1;
-	private static JButton btn_input;
+	private static JButton btn_add_bill;
 	private static JTable table;
+	static DefaultTableModel tabModel;
 	private static JScrollPane scrollPane;
 
-	private UserController userController = new UserController();
+	private BillController billController = new BillController();
 
+	public AddBillFrame() {
+
+	}
+
+	public AddBillFrame(User user) {
+		this.user = user;
+	}
 
 	/**
 	 * 录入界面按钮注册事件监听器
 	 */
 	private void addActionListener() {
-		btn_input.addActionListener(new ActionListener() {
+		btn_add_bill.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Object[] columnNames = { "用户名", "账号", "总信用额", "可用信用额", "可取现用额", "欠款金额", "预存金额", "状态" };
-				String str_name = textField_name.getText();
-				String str_account = textField_account.getText();
-				String str_password = textField_password.getText();
-				if (str_name.length() == 0 || str_account.length() == 0 || str_password.length() == 0) {
+
+
+				if (textField_add_bill.getText().length() < 1) {
 					JOptionPane.showMessageDialog(panel, "输入为空！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 				} else {
+					int n = JOptionPane.showConfirmDialog(panel, "确定消费账单吗?", "温馨提示",JOptionPane.YES_NO_OPTION);//返回的是按钮的index  i=0或者1
 
-					int n = JOptionPane.showConfirmDialog(panel, "确定新增账户吗?", "温馨提示",JOptionPane.YES_NO_OPTION);//返回的是按钮的index  i=0或者1
+					if(n==0) {
+						Bill bill = new Bill();
+						bill.setUserName(user.getName());
+						bill.setAccount(user.getAccount());
+						bill.setAmount(textField_add_bill.getText());
+						bill.setType("1");
+						bill = billController.billInsert(bill);
 
-					if(n==0) { // 确认新增
-						User user = new User();
-						user.setName(str_name);
-						user.setAccount(str_account);
-						user.setPassword(str_password);
-						int userInsert = userController.userInsert(user);
-
-						if (userInsert < 1) {
-							JOptionPane.showMessageDialog(panel, "用户新增失败！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
-						} else {
-							String totalCredit = "5000.00";
-							String availableCredit = "5000.00";
-							int desirable = (int)(5000.00/1.1);
-							String desirableCredit = String.valueOf(desirable);
-							String arrearsAmount = "0.00";
-							String storageAmount = "0.00";
-							String status = "1";
-
-							Object rowData[][] = { { str_name , str_account , totalCredit , availableCredit , desirableCredit , arrearsAmount , storageAmount , status} };
-							DefaultTableModel tabModel = new DefaultTableModel(rowData, columnNames);
+						if (bill != null) {
+							bill.setStatus("1");
+							Object[] columnNames = { "账单号", "用户名", "账号", "金额", "账单类型", "状态" };
+//							Object rowData[][] = { { "11","11","11","11","11","11" } };
+							Object rowData[][] = { { bill.getId(), bill.getUserName(), bill.getAccount(), bill.getAmount(), bill.getType(), bill.getStatus() }};
+							tabModel = new DefaultTableModel(rowData, columnNames);
 							table.setModel(tabModel);
 							table.setEnabled(true);
-							JOptionPane.showMessageDialog(panel, "用户新增成功！！", "温馨提示",JOptionPane.INFORMATION_MESSAGE);
+
+							textField_add_bill.setText("");
+
+							JOptionPane.showMessageDialog(panel, "消费成功！！", "温馨提示",JOptionPane.INFORMATION_MESSAGE);
+						} else {
+							JOptionPane.showMessageDialog(panel, "消费失败！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 						}
 					}
-					textField_name.setText("");
-					textField_account.setText("");
-					textField_password.setText("");
 				}
-
 			}
 		});
 	}
@@ -97,7 +86,7 @@ public class AddAccountFrame {
 	 */
 	public JInternalFrame init() {
 		// 创建一个内部窗口
-		JInternalFrame internalFrame = new JInternalFrame("新增账户", // title
+		JInternalFrame internalFrame = new JInternalFrame("新增消费账单", // title
 				false, // resizable改变大小
 				true, // closable
 				false, // maximizable最大最小化
@@ -113,10 +102,10 @@ public class AddAccountFrame {
 		String path = System.getProperty("user.dir")+"\\src"+"\\img\\注册背景.jfif";
 		panel = new HomePanel(path);
 //		panel = new JPanel();
-		panel.setBounds(0, 0, 999, 257);
+		panel.setBounds(0, 0, 999, 157);
 		// 表头（列名）
-		Object[] columnNames = { "用户名", "账号", "总信用额", "可用信用额", "可取现用额", "欠款金额", "预存金额", "状态" };
-		Object rowData[][] = { { " ", " ", " ", " ", " ", " ", " ", " " } };
+		Object[] columnNames = { "账单号", "用户名", "账号", "金额", "账单类型", "状态" };
+		Object rowData[][] = { { " ", " ", " ", " ", " ", " " } };
 		table = new MyTable(rowData, columnNames);
 
 		// 设置表格内容颜色
@@ -136,7 +125,7 @@ public class AddAccountFrame {
 		table.getColumnModel().getColumn(0).setPreferredWidth(20);
 		panel.setLayout(new BorderLayout(0, 0));
 		// 设置滚动面板视口大小（超过该大小的行数据，需要拖动滚动条才能看到）
-		table.setPreferredScrollableViewportSize(new Dimension(999, 252));
+		table.setPreferredScrollableViewportSize(new Dimension(999, 152));
 		/*
 		 * 将表格设置为透明，表格同样包括表格本身和其中的内容项
 		 * 仅仅将表格本身设置为透明也没有用，应该将其中的内容项也设置为透明
@@ -163,41 +152,41 @@ public class AddAccountFrame {
 
 		String path_1 = System.getProperty("user.dir")+"\\src"+"\\img\\注册背景.jfif";
 		panel_1 = new HomePanel(path_1);
-		panel_1.setBounds(0, 260, 999, 204);
+		panel_1.setBounds(0, 160, 999, 304);
 		internalFrame.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 
-		JLabel lblNewLabel = new JLabel("用户名：");
-		lblNewLabel.setBounds(50, 58, 70, 18);
-		panel_1.add(lblNewLabel);
+//		JLabel lblNewLabel = new JLabel("用户名：");
+//		lblNewLabel.setBounds(50, 58, 70, 18);
+//		panel_1.add(lblNewLabel);
 
-		btn_input = new JButton("新增用户");
-		btn_input.setBounds(356, 152, 150, 27);
-		btn_input.setIcon(new ImageIcon("./images/录入_1.png"));
-		panel_1.add(btn_input);
+		btn_add_bill = new JButton("新增账单");
+		btn_add_bill.setBounds(356, 152, 150, 27);
+		btn_add_bill.setIcon(new ImageIcon("./images/录入_1.png"));
+		panel_1.add(btn_add_bill);
 
-		textField_name = new JTextField();
-		textField_name.setBounds(127, 55, 194, 24);
-		textField_name.setColumns(10);
-		panel_1.add(textField_name);
+//		textField_name = new JTextField();
+//		textField_name.setBounds(127, 55, 194, 24);
+//		textField_name.setColumns(10);
+//		panel_1.add(textField_name);
 
-		JLabel lblNewLabel_2 = new JLabel("帐号：");
-		lblNewLabel_2.setBounds(68, 107, 45, 18);
-		panel_1.add(lblNewLabel_2);
+//		JLabel lblNewLabel_2 = new JLabel("帐号：");
+//		lblNewLabel_2.setBounds(68, 107, 45, 18);
+//		panel_1.add(lblNewLabel_2);
 
-		textField_account = new JTextField();
-		textField_account.setBounds(127, 104, 194, 24);
-		textField_account.setColumns(10);
-		panel_1.add(textField_account);
+//		textField_account = new JTextField();
+//		textField_account.setBounds(127, 104, 194, 24);
+//		textField_account.setColumns(10);
+//		panel_1.add(textField_account);
 
-		JLabel lblNewLabel_3 = new JLabel("密码：");
+		JLabel lblNewLabel_3 = new JLabel("金额：");
 		lblNewLabel_3.setBounds(68, 156, 45, 18);
 		panel_1.add(lblNewLabel_3);
 
-		textField_password = new JTextField();
-		textField_password.setBounds(127, 153, 194, 24);
-		panel_1.add(textField_password);
-		textField_password.setColumns(10);
+		textField_add_bill = new JTextField();
+		textField_add_bill.setBounds(127, 153, 194, 24);
+		panel_1.add(textField_add_bill);
+		textField_add_bill.setColumns(10);
 
 		addActionListener();
 		return internalFrame;

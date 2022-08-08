@@ -17,8 +17,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
 import com.han.pojo.User;
-import com.han.view.home.internal_frame.AddAccountFrame;
-import com.han.view.home.internal_frame.UpdateAccountFrame;
+import com.han.view.home.internal_frame.*;
 import com.han.view.imagepanel.HomePanel;
 import com.han.view.login.Login;
 import java.awt.BorderLayout;
@@ -30,19 +29,30 @@ public class Home extends JFrame {
 	private User user;
 	private JPanel panel;
 	private JMenuItem jMenuItemAddAccount;
-	private JMenuItem jMenuItemDeleteAccount;
 	private JMenuItem jMenuItemUpdateAccount;
-	private JMenuItem jMenuItemFindAccount;
+
+
+	private JMenuItem jMenuItemUpdateCredit;
 
 
 
 	private JMenu mnNewMenu_1;
-	private JMenuItem mntmNewMenuItem_pmanage;
 	private JMenu mnNewMenu_2;
-	private JMenuItem mntmNewMenuItem_3;
-	private JMenuItem mntmNewMenuItem_4;
-	private JMenuItem mntmNewMenuItem_one;
-	private JMenuItem mntmNewMenuItem_exit;
+	private JMenu mnNewMenu_3;
+	private JMenu mnNewMenu_4;
+	private JMenu mnNewMenu_5;
+	private JMenu mnNewMenu_6;
+
+	private JMenuItem jMenuItemAddBill;
+	private JMenuItem jMenuItemFindBill;
+
+	private JMenuItem jMenuItemCash;
+	private JMenuItem jMenuItemRepayment;
+	private JMenuItem jMenuItemCallForMoney;
+
+
+	private JMenuItem jMenuItem_exit;
+	private JMenuItem jMenuItem_personal_center;
 
 	/**
 	 * 获取user对象，用于显示用户个人信息
@@ -97,52 +107,114 @@ public class Home extends JFrame {
 		menuBar.setBackground(Color.WHITE);
 		getContentPane().add(menuBar, BorderLayout.NORTH);
 		JMenu mnNewMenu = new JMenu("帐号资料管理");
-		menuBar.add(mnNewMenu);
+		if ("1".equals(user.getIdentity())){
+			menuBar.add(mnNewMenu);
+		}
 		mnNewMenu.setIcon(new ImageIcon("./images/菜单_1.png"));
 
 		jMenuItemAddAccount = new JMenuItem("新增账户");
 		mnNewMenu.add(jMenuItemAddAccount);
 		jMenuItemAddAccount.setIcon(new ImageIcon("./images/操作_1.png"));
 		mnNewMenu.addSeparator();
-		jMenuItemDeleteAccount = new JMenuItem("删除用户");
-		mnNewMenu.add(jMenuItemDeleteAccount);
-		jMenuItemDeleteAccount.setIcon(new ImageIcon("./images/操作_2.png"));
-		mnNewMenu.addSeparator();
+
+//		jMenuItemDeleteAccount = new JMenuItem("删除用户");
+//		mnNewMenu.add(jMenuItemDeleteAccount);
+//		jMenuItemDeleteAccount.setIcon(new ImageIcon("./images/操作_2.png"));
+//		mnNewMenu.addSeparator();
+
 		jMenuItemUpdateAccount = new JMenuItem("修改用户");
 		mnNewMenu.add(jMenuItemUpdateAccount);
 		jMenuItemUpdateAccount.setIcon(new ImageIcon("./images/操作_1.png"));
-		mnNewMenu.addSeparator();
-		jMenuItemFindAccount = new JMenuItem("查询用户");
-		mnNewMenu.add(jMenuItemFindAccount);
-		jMenuItemFindAccount.setIcon(new ImageIcon("./images/操作_2.png"));
+//		mnNewMenu.addSeparator();
+//
+//		jMenuItemFindAccount = new JMenuItem("查询用户");
+//		mnNewMenu.add(jMenuItemFindAccount);
+//		jMenuItemFindAccount.setIcon(new ImageIcon("./images/操作_2.png"));
 
-		mnNewMenu_1 = new JMenu("系统管理");
-		menuBar.add(mnNewMenu_1);
+		mnNewMenu_1 = new JMenu("账户信用管理");
+
+		if ("1".equals(user.getIdentity())){
+			menuBar.add(mnNewMenu_1);
+		}
 		mnNewMenu_1.setIcon(new ImageIcon("./images/菜单_1.png"));
 
-//		mntmNewMenuItem_pmanage = new JMenuItem("人员管理");
-//		mnNewMenu_1.add(mntmNewMenuItem_pmanage);
-//		mntmNewMenuItem_pmanage.setIcon(new ImageIcon("./images/操作_1.png"));
+		jMenuItemUpdateCredit = new JMenuItem("信用修改");
+		mnNewMenu_1.add(jMenuItemUpdateCredit);
+		jMenuItemUpdateCredit.setIcon(new ImageIcon("./images/操作_1.png"));
 
 //		mntmNewMenuItem_one = new JMenuItem("个人信息");
 //		mnNewMenu_1.add(mntmNewMenuItem_one);
 //		mntmNewMenuItem_one.setIcon(new ImageIcon("./images/操作_2.png"));
 
-		mnNewMenu_2 = new JMenu("系统信息");
+		mnNewMenu_2 = new JMenu("账单管理");
 		menuBar.add(mnNewMenu_2);
 		mnNewMenu_2.setIcon(new ImageIcon("./images/菜单_1.png"));
 
-//		mntmNewMenuItem_3 = new JMenuItem("垃圾站详细");
-//		mnNewMenu_2.add(mntmNewMenuItem_3);
-//		mntmNewMenuItem_3.setIcon(new ImageIcon("./images/操作_1.png"));
+		jMenuItemAddBill = new JMenuItem("新增账单");
+		if ("0".equals(user.getIdentity())){
+			mnNewMenu_2.add(jMenuItemAddBill);
+		}
 
-//		mntmNewMenuItem_4 = new JMenuItem("关于系统");
-//		mnNewMenu_2.add(mntmNewMenuItem_4);
-//		mntmNewMenuItem_4.setIcon(new ImageIcon("./images/操作_2.png"));
+		jMenuItemAddBill.setIcon(new ImageIcon("./images/操作_1.png"));
 
-		mntmNewMenuItem_exit = new JMenuItem("退出登录");
-		mnNewMenu_2.add(mntmNewMenuItem_exit);
-		mntmNewMenuItem_exit.setIcon(new ImageIcon("./images/退出_1.png"));
+		jMenuItemFindBill = new JMenuItem("账单查询");
+		mnNewMenu_2.add(jMenuItemFindBill);
+		jMenuItemFindBill.setIcon(new ImageIcon("./images/操作_2.png"));
+
+
+		mnNewMenu_3 = new JMenu("取现管理");
+		if ("0".equals(user.getIdentity())){
+			menuBar.add(mnNewMenu_3);
+		}
+		mnNewMenu_3.setIcon(new ImageIcon("./images/菜单_1.png"));
+
+		jMenuItemCash = new JMenuItem("取现");
+		mnNewMenu_3.add(jMenuItemCash);
+		jMenuItemCash.setIcon(new ImageIcon("./images/操作_1.png"));
+
+
+
+		mnNewMenu_4 = new JMenu("还款管理");
+		if ("0".equals(user.getIdentity())){
+			menuBar.add(mnNewMenu_4);
+		}
+		mnNewMenu_4.setIcon(new ImageIcon("./images/菜单_1.png"));
+
+		jMenuItemRepayment = new JMenuItem("还款");
+		mnNewMenu_4.add(jMenuItemRepayment);
+		jMenuItemRepayment.setIcon(new ImageIcon("./images/操作_1.png"));
+
+
+		mnNewMenu_5 = new JMenu("催款管理");
+		if ("1".equals(user.getIdentity())){
+			menuBar.add(mnNewMenu_5);
+		}
+		mnNewMenu_5.setIcon(new ImageIcon("./images/菜单_1.png"));
+
+		jMenuItemCallForMoney = new JMenuItem("催款");
+		mnNewMenu_5.add(jMenuItemCallForMoney);
+		jMenuItemCallForMoney.setIcon(new ImageIcon("./images/操作_1.png"));
+
+
+
+		mnNewMenu_6 = new JMenu("系统管理");
+		menuBar.add(mnNewMenu_6);
+		mnNewMenu_6.setIcon(new ImageIcon("./images/菜单_1.png"));
+
+		jMenuItem_personal_center = new JMenuItem("个人中心");
+
+		if ("0".equals(user.getIdentity())){
+			mnNewMenu_6.add(jMenuItem_personal_center);
+		}
+		jMenuItem_personal_center.setIcon(new ImageIcon("./images/操作_1.png"));
+
+
+		jMenuItem_exit = new JMenuItem("退出登录");
+		mnNewMenu_6.add(jMenuItem_exit);
+		jMenuItem_exit.setIcon(new ImageIcon("./images/退出_1.png"));
+
+
+
 
 		String path = System.getProperty("user.dir")+"\\src"+"\\img\\模糊背景_1.jpg";
 		panel = new HomePanel(path);
@@ -157,41 +229,96 @@ public class Home extends JFrame {
 	 * 菜单项的事件监听器
 	 */
 	public void setOncListener() {
+
+		jMenuItem_personal_center.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("进入个人中心......");
+			}
+		});
+
+		jMenuItemCallForMoney.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("打开催款界面，催款成功....");
+			}
+		});
+
+		jMenuItemRepayment.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("打开还款页面，还款成功....");
+			}
+		});
+
+		jMenuItemCash.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AddCashBillFrame jquery = new AddCashBillFrame(user);
+				JInternalFrame addCashBillFrame = jquery.init();
+				panel.add(addCashBillFrame, BorderLayout.CENTER);
+				addCashBillFrame.setVisible(true);
+			}
+		});
+
 		jMenuItemAddAccount.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("录入成功");
+//				System.out.println("录入成功");
 				AddAccountFrame AccountFrame = new AddAccountFrame();
 				JInternalFrame addAccountFrame = AccountFrame.init();
 				panel.add(addAccountFrame, BorderLayout.CENTER);
 				addAccountFrame.setVisible(true);
 			}
 		});
+
+		/**
+		 * x新增账单按钮，
+		 */
+		jMenuItemAddBill.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AddBillFrame jquery = new AddBillFrame(user);
+				JInternalFrame addBillFrame = jquery.init();
+				panel.add(addBillFrame, BorderLayout.CENTER);
+				addBillFrame.setVisible(true);
+			}
+		});
+
+		jMenuItemFindBill.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FindBillFrame jquery = new FindBillFrame(user);
+				JInternalFrame findBillFrame = jquery.init();
+				panel.add(findBillFrame, BorderLayout.CENTER);
+				findBillFrame.setVisible(true);
+			}
+		});
+
 		jMenuItemUpdateAccount.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("处理成功");
+//				System.out.println("处理成功");
 				UpdateAccountFrame jquery = new UpdateAccountFrame();
 				JInternalFrame updateAccountFrame = jquery.init();
 				panel.add(updateAccountFrame, BorderLayout.CENTER);
 				updateAccountFrame.setVisible(true);
 			}
 		});
-//		mntmNewMenuItem_pmanage.addActionListener(new ActionListener() {
-//
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				// TODO Auto-generated method stub
-//				System.out.println("进入人员管理成功");
-//				jInternalFrame_pManagement jpm = new jInternalFrame_pManagement();
-//				JInternalFrame internalFrame = jpm.init();
-//				panel.add(internalFrame, BorderLayout.CENTER);
-//				internalFrame.setVisible(true);
-//			}
-//		});
+		jMenuItemUpdateCredit.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				UpdateAccountCredit jquery = new UpdateAccountCredit();
+				JInternalFrame updateAccountCredit = jquery.init();
+				panel.add(updateAccountCredit, BorderLayout.CENTER);
+				updateAccountCredit.setVisible(true);
+			}
+		});
 //		mntmNewMenuItem_one.addActionListener(new ActionListener() {
 //
 //			@Override
@@ -205,7 +332,7 @@ public class Home extends JFrame {
 //				internalFrame_1.setVisible(true);
 //			}
 //		});
-		mntmNewMenuItem_exit.addActionListener(new ActionListener() {
+		jMenuItem_exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int n = JOptionPane.showConfirmDialog(panel, "确定退出登录?", "温馨提示",JOptionPane.YES_NO_OPTION);//返回的是按钮的index  i=0或者1
 				if(n==0) {

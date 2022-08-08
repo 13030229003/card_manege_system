@@ -2,6 +2,7 @@ package com.han.service;
 
 import com.han.dao.UserDAO;
 import com.han.pojo.User;
+import com.han.utils.DateUtil;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class UserService {
 
     public User login(User user) {
 
-        String sql = "select * from user where account=? and password=? and identity=?";
+        String sql = "select * from user where account=? and password=? and identity=? and status!=2";
         User querySingle = userDAO.querySingle(sql, User.class, user.getAccount(), user.getPassword(),user.getIdentity());
         return querySingle;
     }
@@ -30,20 +31,41 @@ public class UserService {
     }
 
     public int userInsert(User user) {
-        String sql = "insert into user(name,account,password) values(?,?,?)";
-        int update = userDAO.update(sql, user.getName(), user.getAccount(), user.getPassword());
+
+        String totalCredit = "5000";
+
+        String availableCredit = "5000";
+
+        int desirable = (int)(5000.00/1.1);
+
+        String desirableCredit = String.valueOf(desirable);
+
+        String nowTime = DateUtil.getNowTime();
+
+        String sql = "insert into user(name,account,password,totalCredit,availableCredit,desirableCredit,registerTime) values(?,?,?,?,?,?,?)";
+        int update = userDAO.update(sql, user.getName(), user.getAccount(), user.getPassword(),totalCredit,availableCredit,desirableCredit,nowTime);
         return update;
     }
 
     /**
-     * 返回表格信息。
+     * 删除用户，设置用户状态为  ： 2
+     * @param user
      * @return
      */
-    public Object[][] userList() {
+    public int userDelete(User user) {
 
-        String sql = "select * from user";
-        List<User> userList = userDAO.queryMulti(sql, User.class);
+        String sql = "update user set status=2 where account=? ";
+        int update = userDAO.update(sql, user.getAccount());
+        return update;
 
+    }
+
+    /**
+     * 根据查询结果返回Object的二维数组，用于表格的显示。
+     * @param userList
+     * @return
+     */
+    private Object[][] getObjectList(List<User> userList) {
         Object[][] results = new Object[userList.size()][8];
 
         for (int i = 0; i < userList.size(); i++) {
@@ -59,6 +81,38 @@ public class UserService {
         }
 
         return results;
+    }
+
+    /**
+     * 返回表格信息，模糊查询。
+     * @return
+     */
+    public Object[][] userListByLike(String like) {
+
+        String sql = "select * from user where account like concat('%',?,'%') or name like concat('%',?,'%') and status!=2";
+        List<User> userList = userDAO.queryMulti(sql, User.class,like,like);
+
+        if (userList.size() < 1) {
+            return null;
+        }
+
+        return getObjectList(userList);
+    }
+
+    /**
+     * 返回表格信息。
+     * @return
+     */
+    public Object[][] userList() {
+
+        String sql = "select * from user where status!=2";
+        List<User> userList = userDAO.queryMulti(sql, User.class);
+
+        if (userList.size() < 1) {
+            return null;
+        }
+
+        return getObjectList(userList);
     }
 
     /**

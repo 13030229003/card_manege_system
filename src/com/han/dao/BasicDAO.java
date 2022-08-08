@@ -1,7 +1,6 @@
 package com.han.dao;
 
 import com.han.utils.JDBCUtilsByDruid;
-import com.sun.corba.se.pept.transport.ConnectionCache;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;

@@ -41,7 +41,7 @@ public class UpdateAccountFrame {
 	private static JPanel panel;
 	private JPanel panel_1;
 	private static JButton btn_delete;
-	private static JButton btn_all;
+	private static JButton btn_find;
 	private static JButton btn_update;
 	private static JComboBox comboBox;
 	private static JScrollPane scrollPane;
@@ -102,17 +102,23 @@ public class UpdateAccountFrame {
 				}
 			}
 		});
+
+		// 查询输入按回车触发按钮的点击事件
+		textField_find.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				btn_find.doClick();
+			}
+		});
+
+
+
 		btn_update.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String new_cla = comboBox.getSelectedItem().toString();
 				if(new_cla.equals("----")) {
 					JOptionPane.showMessageDialog(panel, "用户状态选择错误！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 				}else {
-
-//					System.out.println(find_name);
-//					System.out.println(find_account);
-//					System.out.println(textField_available.getText().length());
-//					System.out.println(comboBox.getSelectedIndex() == 0 ? "冻结":"开通");
 
 					if (find_name.length() == 0 || find_account.length() == 0 || textField_available.getText().length() == 0) {
 						JOptionPane.showMessageDialog(panel, "用户可用额度修改错误！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
@@ -127,7 +133,7 @@ public class UpdateAccountFrame {
 							user.setAvailableCredit(textField_available.getText());
 							user.setStorageAmount(find_storage);
 							user.setStatus(String.valueOf(comboBox.getSelectedIndex()));
-							System.out.println(user);
+//							System.out.println(user);
 							int i = userController.userUpdateByAccount(user);
 
 							if (i > 0) {
@@ -140,20 +146,6 @@ public class UpdateAccountFrame {
 							} else {
 								JOptionPane.showMessageDialog(panel, "用户修改失败！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 							}
-
-
-
-//							dealWith_data.update(new_cla, all);
-//							// 表头（列名）
-//							Object[] columnNames = { "名称", "数量", "类别", "备注" };
-//							Object rowData[][] = dealWith_data.select();
-//							tabModel = new DefaultTableModel(rowData, columnNames);
-//							table.setModel(tabModel);
-//							table.setEnabled(true);
-//							textField_name.setText("");
-//							textField_sum.setText("");
-//							textField_cla.setText("");
-//							textField_t.setText("");
 						}
 					}
 				}
@@ -162,47 +154,59 @@ public class UpdateAccountFrame {
 		});
 		btn_delete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				String str_name = textField_name.getText();
-//				String str_sum = textField_sum.getText();
-//				String str_cla = textField_cla.getText();
-//				String str_t = textField_t.getText();
-//
-//				if (str_name.length() == 0 || str_sum.length() == 0 || str_cla.length() == 0) {
-//					JOptionPane.showMessageDialog(panel, "请在表格选择需要删除的垃圾！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
-//				} else {
-//					int n = JOptionPane.showConfirmDialog(panel, "确定删除垃圾?", "温馨提示",JOptionPane.YES_NO_OPTION);//返回的是按钮的index  i=0或者1
-//					if(n==0) {
-//						all_Rubbish all = new all_Rubbish(str_name, str_sum, str_cla, str_t);
-//						dealWith_data.delete(all);
-//						// 表头（列名）
-//						Object[] columnNames = { "名称", "数量", "类别", "备注" };
-//						Object rowData[][] = dealWith_data.select();
-//						tabModel = new DefaultTableModel(rowData, columnNames);
-//						table.setModel(tabModel);
-//						table.setEnabled(true);
-//						textField_name.setText("");
-//						textField_sum.setText("");
-//						textField_cla.setText("");
-//						textField_t.setText("");
-//					}
-//				}
+
+				if (find_name.length() == 0 || find_account.length() == 0 || textField_available.getText().length() == 0) {
+					JOptionPane.showMessageDialog(panel, "用户可用额度修改错误！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
+				} else {
+
+					int n = JOptionPane.showConfirmDialog(panel, "确定删除帐号信息吗?", "温馨提示",JOptionPane.YES_NO_OPTION);//返回的是按钮的index  i=0或者1
+
+					if(n==0) { // 确认删除
+						User user = new User();
+						user.setAccount(find_account);
+						int userDelete = userController.userDelete(user);
+						if (userDelete > 0) {
+							JOptionPane.showMessageDialog(panel, "用户删除成功！！", "温馨提示",JOptionPane.INFORMATION_MESSAGE);
+							Object[] columnNames = { "用户名", "账号", "总信用额", "可用信用额", "可取现用额", "欠款金额", "预存金额", "状态" };
+							Object rowData[][] = userController.userList();
+							tabModel = new DefaultTableModel(rowData, columnNames);
+							table.setModel(tabModel);
+							table.setEnabled(true);
+
+							textField_name.setText("");
+							textField_account.setText("");
+							textField_available.setText("");
+							comboBox.setSelectedIndex(2);
+
+						} else {
+							JOptionPane.showMessageDialog(panel, "用户删除失败！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
+						}
+
+					} else { // 取消删除
+
+						JOptionPane.showMessageDialog(panel, "用户删除操作取消！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
+
+					}
+				}
+
 			}
 		});
-		btn_all.addActionListener(new ActionListener() {
+		btn_find.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
 				Object[] columnNames = { "用户名", "账号", "总信用额", "可用信用额", "可取现用额", "欠款金额", "预存金额", "状态" };
-				Object rowData[][] = userController.userList();
+				Object rowData[][] = null;
+				if (textField_find.getText().length() == 0) {
+
+					rowData = userController.userList();
+
+				} else {
+					rowData = userController.userListByLike(textField_find.getText());
+				}
+
 				tabModel = new DefaultTableModel(rowData, columnNames);
 				table.setModel(tabModel);
 				table.setEnabled(true);
-//				comboBox.setSelectedIndex(0);
-				// 表头（列名）
-//				Object[] columnNames = { "名称", "数量", "类别", "备注" };
-//				String str_cla = comboBox_query.getSelectedItem().toString();
-//				Object rowData[][] = dealWith_data.select(str_cla);
-//				tabModel = new DefaultTableModel(rowData, columnNames);
-
 			}
 		});
 		comboBox.addItemListener(new ItemListener() {
@@ -213,7 +217,7 @@ public class UpdateAccountFrame {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					// 选择的下拉框选项
 //					textField_cla.setText(e.getItem().toString());
-					System.out.println(e.getItem().toString());
+//					System.out.println(e.getItem().toString());
 
 				}
 			}
@@ -307,17 +311,16 @@ public class UpdateAccountFrame {
 
 		// 查询文本框
 		textField_find = new JTextField();
-//		textField_t.setEditable(false);
 		textField_find.setBounds(600, 6, 200, 30);
 		panel_1.add(textField_find);
 		textField_find.setColumns(10);
 
 
 		// 查询按钮
-		btn_all = new JButton("查询");
-		btn_all.setBounds(600, 50, 111, 27);
-		btn_all.setIcon(new ImageIcon("./images/垃圾查询_1.png"));
-		panel_1.add(btn_all);
+		btn_find = new JButton("查询");
+		btn_find.setBounds(600, 50, 111, 27);
+		btn_find.setIcon(new ImageIcon("./images/垃圾查询_1.png"));
+		panel_1.add(btn_find);
 
 
 
@@ -338,7 +341,6 @@ public class UpdateAccountFrame {
 		panel_1.add(lblNewLabel_2);
 
 		textField_available = new JTextField();
-//		textField_sum.setEditable(false);availableCredit
 		textField_available.setBounds(90, 104, 186, 24);
 		textField_available.setColumns(10);
 		panel_1.add(textField_available);
@@ -365,14 +367,6 @@ public class UpdateAccountFrame {
 		comboBox.setSelectedIndex(2);
 		panel_1.add(comboBox);
 
-
-//		comboBox_query = new JComboBox();
-//		comboBox_query.setModel(new DefaultComboBoxModel(
-//				new String[] { "全部垃圾", "干垃圾", "湿垃圾",
-//						"有害垃圾", "厨余垃圾", "可回收垃圾" }));
-//		comboBox_query.setSelectedIndex(0);
-//		comboBox_query.setBounds(593, 55, 146, 24);
-//		panel_1.add(comboBox_query);
 		addactionListener();
 		return internalFrame;
 

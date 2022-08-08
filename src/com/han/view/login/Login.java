@@ -117,28 +117,38 @@ public class Login extends JFrame {
 				String psw = new String(textField_psw.getPassword());
 				String identify = comboBox.getSelectedItem().toString();
 				if (identify == "管理员") {
-					System.out.println("管理员");
+//					System.out.println("管理员");
 					if (account.length() == 0 || psw.length() == 0) {
 						JOptionPane.showMessageDialog(contentPanel, "请输入帐号或密码！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 					} else {
 						User login = userController.login(new User(account, psw, "1"));
+
 						if (login != null) {
-							dispose();
-							Home home = new Home(login);
+							if ("0".equals(login.getStatus())) {
+								JOptionPane.showMessageDialog(contentPanel, "用户已被冻结！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
+							} else {
+								dispose();
+								Home home = new Home(login);
+							}
+
 						}else {
 							JOptionPane.showMessageDialog(contentPanel, "密码输入错误！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 							textField_psw.setText("");
 						}
 					}
 				} else {
-					System.out.println("普通用户");
+//					System.out.println("普通用户");
 					if (account.length() == 0 || psw.length() == 0) {
 						JOptionPane.showMessageDialog(contentPanel, "请输入帐号或密码！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 					} else {
 						User login = userController.login(new User(account, psw, "0"));
 						if (login != null) {
-							dispose();
-							Home home = new Home(login);
+							if ("0".equals(login.getStatus())) {
+								JOptionPane.showMessageDialog(contentPanel, "用户已被冻结！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
+							} else {
+								dispose();
+								Home home = new Home(login);
+							}
 						}else {
 							JOptionPane.showMessageDialog(contentPanel, "密码输入错误！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 							textField_psw.setText("");
