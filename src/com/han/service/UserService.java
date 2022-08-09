@@ -17,6 +17,22 @@ public class UserService {
 
     private UserDAO userDAO = new UserDAO();
 
+
+    public int userStorageAmountCharge(User user,String money) {
+
+        String sql = "update user set storageAmount=storageAmount+? where account=?";
+        int update = userDAO.update(sql, money, user.getAccount());
+        return update;
+    }
+
+    public User userGetByAccount(String account) {
+
+        String sql = "select * from user where account=?";
+        User user = userDAO.querySingle(sql, User.class, account);
+        return user;
+
+    }
+
     public User login(User user) {
 
         String sql = "select * from user where account=? and password=? and identity=? and status!=2";
@@ -105,7 +121,7 @@ public class UserService {
      */
     public Object[][] userList() {
 
-        String sql = "select * from user where status!=2";
+        String sql = "select * from user where status!=2 and identity=0";
         List<User> userList = userDAO.queryMulti(sql, User.class);
 
         if (userList.size() < 1) {

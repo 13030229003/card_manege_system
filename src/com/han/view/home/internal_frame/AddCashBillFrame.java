@@ -17,8 +17,6 @@ public class AddCashBillFrame {
 
 	private User user;
 
-	private static JTextField textField_name;
-	private static JTextField textField_account;
 	private static JTextField textField_add_bill;
 	private static JPanel panel;
 	private static JPanel panel_1;
@@ -154,28 +152,10 @@ public class AddCashBillFrame {
 		internalFrame.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 
-//		JLabel lblNewLabel = new JLabel("用户名：");
-//		lblNewLabel.setBounds(50, 58, 70, 18);
-//		panel_1.add(lblNewLabel);
-
 		btn_add_bill = new JButton("取现");
 		btn_add_bill.setBounds(356, 152, 150, 27);
 		btn_add_bill.setIcon(new ImageIcon("./images/录入_1.png"));
 		panel_1.add(btn_add_bill);
-
-//		textField_name = new JTextField();
-//		textField_name.setBounds(127, 55, 194, 24);
-//		textField_name.setColumns(10);
-//		panel_1.add(textField_name);
-
-//		JLabel lblNewLabel_2 = new JLabel("帐号：");
-//		lblNewLabel_2.setBounds(68, 107, 45, 18);
-//		panel_1.add(lblNewLabel_2);
-
-//		textField_account = new JTextField();
-//		textField_account.setBounds(127, 104, 194, 24);
-//		textField_account.setColumns(10);
-//		panel_1.add(textField_account);
 
 		JLabel lblNewLabel_3 = new JLabel("取现金额：");
 		lblNewLabel_3.setBounds(48, 156, 90, 18);

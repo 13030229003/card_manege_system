@@ -21,6 +21,95 @@ public class BillService {
 
    private UserService userService = new UserService();
 
+
+    /**
+     * 根据订单id还款（只有类型位 1 和 3 的订单才能还款），将订单状态设置为0，   1表示为未还款。
+     *          1、然后生成还款订单，类型为 2。 1表示消费订单，3表示取现订单。
+     * @param id
+     * @return
+     */
+   public int billRepayment(String id,String repayMoney,User user) {
+
+       /**
+        * 1、判断用户预存金额是否大于还款金额。大于就可以还款，不够提示余额不足。
+        *
+        * 2、 够还款
+        *           1、将账单状态设置为 0， 可取余额 增加为  还款金额/1.1  ，预存金额 = 预存金额 - 还款金额。
+        *           2、生成新的还款订单。
+        */
+       // 根据用户帐号获取数据库最新的用户信息，主要是获取用户的预存金额。
+       user = userService.userGetByAccount(user.getAccount());
+
+
+
+//       System.out.println(id);
+//       System.out.println(repayMoney);
+//       System.out.println(user);
+
+       Double storageAmount = Double.valueOf(user.getStorageAmount());
+       Double repayMoney_ = Double.valueOf(repayMoney);
+
+       int addMoney = (int) Math.ceil(repayMoney_/1.1);
+       if (storageAmount >= repayMoney_) {
+        // 预存余额够，进行还款
+           /**
+            * 1、将账单状态设置为 0，
+            * 可取余额 desirableCredit 增加为  还款金额/1.1
+            *  预存金额 storageAmount = 预存金额 - 还款金额。
+            *  欠款金额 arrearsAmount = 欠款金额 - 还款金额。
+            *
+            */
+           String repaySql = "update bill set status=0 where id=?";
+           // 设置订单 状态为 0
+           int repayIndex = billDAO.update(repaySql, id);
+//
+           // 更新用户的可取余额 和 预存金额   根据用户account
+           String userSql = "update user set desirableCredit=desirableCredit+?,storageAmount=storageAmount-?,arrearsAmount=arrearsAmount-? where account=?";
+           // 这里直接使用billDAO来执行更新用户的操作。
+           int userUpdateIndex = billDAO.update(userSql, addMoney, repayMoney, repayMoney,user.getAccount());
+
+           /**
+            * 1、生成新的 还款 账单。
+            */
+           String billID = "P" + DateUtil.getNowTime2();
+           String addBillSql = "insert into bill(id,userName,account,amount,type) values(?,?,?,?,?)";
+           int billInsertIndex = billDAO.update(addBillSql,billID,user.getName(),user.getAccount(), repayMoney, "2");
+
+           if (repayIndex > 0 && userUpdateIndex > 0 && billInsertIndex > 0) {
+//               System.out.println("更新成功。。。。。。。");
+               return 1;
+           } else {
+//               System.out.println("更新失败。。。。。。。");
+               return 0;
+           }
+
+
+       } else {
+           // 帐号预存余额不够还款，还款失败
+           System.out.println("还款失败，预存余额不足。。。。。");
+           return 0;
+       }
+   }
+
+    /**
+     * 根据用户帐号查找需要还款的账单。除去还款的账单。
+     * @param account
+     * @return
+     */
+    public Object[][] billRepaymentListByAccount(String account) {
+
+        String sql = "select * from bill where account=? and type!=2 and status=1";
+        List<Bill> billList = billDAO.queryMulti(sql, Bill.class, account);
+        Object[][] objectList = getObjectList(billList);
+        return objectList;
+
+    }
+
+
+    /**
+     * 查找所有账单，管理员查找
+     * @return
+     */
     public Object[][] billList() {
 
         String sql = "select * from bill";
@@ -30,6 +119,11 @@ public class BillService {
 
     }
 
+    /**
+     * 根据账单号查找，管理员查找
+     * @param id
+     * @return
+     */
     public Object[][] billListByID(String id) {
 
         String sql = "select * from bill where id like concat('%',?,'%')";
@@ -39,7 +133,40 @@ public class BillService {
 
     }
 
+    /**
+     * 查找需要还款的账单，管理员查找
+     * @return
+     */
+    public Object[][] arrearsBillList() {
 
+        String sql = "select * from bill where type!=2 and status=1";
+        List<Bill> billList = billDAO.queryMulti(sql, Bill.class);
+        Object[][] objectList = getObjectList(billList);
+        return objectList;
+
+    }
+    /**
+     * 根据账单号查找 需要还款的账单，管理员查找
+     * @param id
+     * @return
+     */
+    public Object[][]arrearsBillListByID(String id) {
+
+        String sql = "select * from bill where id like concat('%',?,'%') and type!=2 and status=1";
+        List<Bill> billList = billDAO.queryMulti(sql, Bill.class,id);
+        Object[][] objectList = getObjectList(billList);
+        return objectList;
+
+    }
+
+
+
+
+    /**
+     * 根据用户帐号查找账单，用户查找
+     * @param account
+     * @return
+     */
    public Object[][] billListByAccount(String account) {
 
        String sql = "select * from bill where account=?";
@@ -48,6 +175,13 @@ public class BillService {
        return objectList;
 
    }
+
+    /**
+     * 用户查找账单
+     * @param account
+     * @param id
+     * @return
+     */
     public Object[][] billListByAccountAndID(String account,String id) {
 
         String sql = "select * from bill where account=? and id like concat('%',?,'%')";
@@ -80,14 +214,16 @@ public class BillService {
 
             /**
              * 1、生成账单
-             * 2、减少自己的可用余额
+             * 2、减少自己的可用余额，增加自己的欠款余额。
              */
 
+
+
             String sqlInsert = "insert into bill(id,userName,account,amount,type) values(?,?,?,?,?)";
-            String sqlDec = "update user set desirableCredit=desirableCredit-? where account=?";
+            String sqlDec = "update user set desirableCredit=desirableCredit-?,arrearsAmount=arrearsAmount+? where account=?";
 
             int billInsert = billDAO.update(sqlInsert, bill.getId(), bill.getUserName(),bill.getAccount(), String.valueOf((int)(billAmount * 1.1)), bill.getType());
-            int desirableDec = billDAO.update(sqlDec, bill.getAmount(), bill.getAccount());
+            int desirableDec = billDAO.update(sqlDec, bill.getAmount(),String.valueOf((int)(billAmount * 1.1)), bill.getAccount());
 
             if (billInsert == 1 && desirableDec == 1) {
                 bill.setAmount(String.valueOf((int)(billAmount * 1.1)));
@@ -95,37 +231,38 @@ public class BillService {
             } else {
                 return null;
             }
-
-        } else if ((userDesirableCredit+userStorageAmount) > billAmount) { // 可用余额加上预存余额才够
-
-
-            System.out.println("不够的在用户预存余额中扣除！！！");
-
-            String value = String.valueOf(billAmount - userDesirableCredit);
-            /**
-             * 1、生成账单
-             * 2、减少自己的可用余额为零， 将剩下的在预存余额里面扣除。
-             */
-            String sqlInsert = "insert into bill(id,userName,account,amount,type) values(?,?,?,?,?)";
-            String sqlDec = "update user set desirableCredit=0,storageAmount=storageAmount-? where account=?";
-
-            int billInsert = billDAO.update(sqlInsert, bill.getId(), bill.getUserName(),bill.getAccount() , String.valueOf((int)(billAmount * 1.1)), bill.getType());
-            int desirableDec = billDAO.update(sqlDec, value, bill.getAccount());
-
-            if (billInsert == 1 && desirableDec == 1) {
-                bill.setAmount(String.valueOf((int)(billAmount * 1.1)));
-                return bill;
-            } else {
-                return null;
-            }
-
-        } else {
+        }else {
             /**
              * 可用额度 + 预存余额  <  账单消费      无法消费。
              */
             System.out.println("用户可用余额不够，无法消费！！！");
             return null;
         }
+        //         else if ((userDesirableCredit+userStorageAmount) > billAmount) { // 可用余额加上预存余额才够
+//
+//
+//            System.out.println("不够的在用户预存余额中扣除！！！");
+//
+//            String value = String.valueOf(billAmount - userDesirableCredit);
+//            /**
+//             * 1、生成账单
+//             * 2、减少自己的可用余额为零， 将剩下的在预存余额里面扣除。
+//             */
+//            String sqlInsert = "insert into bill(id,userName,account,amount,type) values(?,?,?,?,?)";
+//            String sqlDec = "update user set desirableCredit=0,storageAmount=storageAmount-? where account=?";
+//
+//            int billInsert = billDAO.update(sqlInsert, bill.getId(), bill.getUserName(),bill.getAccount() , String.valueOf((int)(billAmount * 1.1)), bill.getType());
+//            int desirableDec = billDAO.update(sqlDec, value, bill.getAccount());
+//
+//            if (billInsert == 1 && desirableDec == 1) {
+//                bill.setAmount(String.valueOf((int)(billAmount * 1.1)));
+//                return bill;
+//            } else {
+//                return null;
+//            }
+//
+//        }
+
     }
 
     /**

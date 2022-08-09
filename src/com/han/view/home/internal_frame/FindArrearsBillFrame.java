@@ -1,8 +1,6 @@
 package com.han.view.home.internal_frame;
 
 import com.han.controller.BillController;
-import com.han.controller.UserController;
-import com.han.pojo.Bill;
 import com.han.pojo.User;
 import com.han.view.imagepanel.HomePanel;
 import com.han.view.imagepanel.MyTable;
@@ -14,25 +12,24 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AddBillFrame {
+public class FindArrearsBillFrame {
 
 	private User user;
 
-	private static JTextField textField_add_bill;
+	private static JTextField textField_arrears_bill;
 	private static JPanel panel;
 	private static JPanel panel_1;
-	private static JButton btn_add_bill;
+	private static JButton btn_find_arrears_bill;
 	private static JTable table;
-	static DefaultTableModel tabModel;
 	private static JScrollPane scrollPane;
 
 	private BillController billController = new BillController();
 
-	public AddBillFrame() {
+	public FindArrearsBillFrame() {
 
 	}
 
-	public AddBillFrame(User user) {
+	public FindArrearsBillFrame(User user) {
 		this.user = user;
 	}
 
@@ -40,39 +37,26 @@ public class AddBillFrame {
 	 * 录入界面按钮注册事件监听器
 	 */
 	private void addActionListener() {
-		btn_add_bill.addActionListener(new ActionListener() {
+		btn_find_arrears_bill.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				Object[] columnNames = { "账单号", "用户名", "账号", "金额", "账单类型", "状态" };
+				Object rowData[][] = null;
 
-				if (textField_add_bill.getText().length() < 1) {
-					JOptionPane.showMessageDialog(panel, "输入为空！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
+				if (textField_arrears_bill.getText().length() < 1) {
+					rowData = billController.arrearsBillList();
 				} else {
-					int n = JOptionPane.showConfirmDialog(panel, "确定消费账单吗?", "温馨提示",JOptionPane.YES_NO_OPTION);//返回的是按钮的index  i=0或者1
-
-					if(n==0) {
-						Bill bill = new Bill();
-						bill.setUserName(user.getName());
-						bill.setAccount(user.getAccount());
-						bill.setAmount(textField_add_bill.getText());
-						bill.setType("1");
-						bill = billController.billInsert(bill);
-
-						if (bill != null) {
-							bill.setStatus("1");
-							Object[] columnNames = { "账单号", "用户名", "账号", "金额", "账单类型", "状态" };
-//							Object rowData[][] = { { "11","11","11","11","11","11" } };
-							Object rowData[][] = { { bill.getId(), bill.getUserName(), bill.getAccount(), bill.getAmount(), bill.getType(), bill.getStatus() }};
-							tabModel = new DefaultTableModel(rowData, columnNames);
-							table.setModel(tabModel);
-							table.setEnabled(true);
-
-							textField_add_bill.setText("");
-
-							JOptionPane.showMessageDialog(panel, "消费成功！！", "温馨提示",JOptionPane.INFORMATION_MESSAGE);
-						} else {
-							JOptionPane.showMessageDialog(panel, "消费失败！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
-						}
-					}
+					rowData = billController.arrearsBillListByID(textField_arrears_bill.getText());
 				}
+
+				DefaultTableModel tabModel = new DefaultTableModel(rowData, columnNames);
+				table.setModel(tabModel);
+				table.setEnabled(true);
+			}
+		});
+		textField_arrears_bill.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				btn_find_arrears_bill.doClick();
 			}
 		});
 	}
@@ -83,7 +67,7 @@ public class AddBillFrame {
 	 */
 	public JInternalFrame init() {
 		// 创建一个内部窗口
-		JInternalFrame internalFrame = new JInternalFrame("新增消费账单", // title
+		JInternalFrame internalFrame = new JInternalFrame("催款界面", // title
 				false, // resizable改变大小
 				true, // closable
 				false, // maximizable最大最小化
@@ -99,11 +83,12 @@ public class AddBillFrame {
 		String path = System.getProperty("user.dir")+"\\src"+"\\img\\注册背景.jfif";
 		panel = new HomePanel(path);
 //		panel = new JPanel();
-		panel.setBounds(0, 0, 999, 157);
+		panel.setBounds(0, 0, 999, 307);
 		// 表头（列名）
 		Object[] columnNames = { "账单号", "用户名", "账号", "金额", "账单类型", "状态" };
 		Object rowData[][] = { { " ", " ", " ", " ", " ", " " } };
 		table = new MyTable(rowData, columnNames);
+
 
 		// 设置表格内容颜色
 		table.setForeground(Color.BLACK); // 字体颜色
@@ -122,7 +107,7 @@ public class AddBillFrame {
 		table.getColumnModel().getColumn(0).setPreferredWidth(20);
 		panel.setLayout(new BorderLayout(0, 0));
 		// 设置滚动面板视口大小（超过该大小的行数据，需要拖动滚动条才能看到）
-		table.setPreferredScrollableViewportSize(new Dimension(999, 152));
+		table.setPreferredScrollableViewportSize(new Dimension(999, 302));
 		/*
 		 * 将表格设置为透明，表格同样包括表格本身和其中的内容项
 		 * 仅仅将表格本身设置为透明也没有用，应该将其中的内容项也设置为透明
@@ -153,19 +138,19 @@ public class AddBillFrame {
 		internalFrame.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 
-		btn_add_bill = new JButton("新增账单");
-		btn_add_bill.setBounds(356, 152, 150, 27);
-		btn_add_bill.setIcon(new ImageIcon("./images/录入_1.png"));
-		panel_1.add(btn_add_bill);
+		btn_find_arrears_bill = new JButton("查询账单");
+		btn_find_arrears_bill.setBounds(356, 152, 150, 27);
+		btn_find_arrears_bill.setIcon(new ImageIcon("./images/录入_1.png"));
+		panel_1.add(btn_find_arrears_bill);
 
-		JLabel lblNewLabel_3 = new JLabel("金额：");
-		lblNewLabel_3.setBounds(68, 156, 45, 18);
+		JLabel lblNewLabel_3 = new JLabel("账单号：");
+		lblNewLabel_3.setBounds(68, 156, 100, 18);
 		panel_1.add(lblNewLabel_3);
 
-		textField_add_bill = new JTextField();
-		textField_add_bill.setBounds(127, 153, 194, 24);
-		panel_1.add(textField_add_bill);
-		textField_add_bill.setColumns(10);
+		textField_arrears_bill = new JTextField();
+		textField_arrears_bill.setBounds(127, 153, 194, 24);
+		panel_1.add(textField_arrears_bill);
+		textField_arrears_bill.setColumns(10);
 
 		addActionListener();
 		return internalFrame;

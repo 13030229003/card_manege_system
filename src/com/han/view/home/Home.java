@@ -1,28 +1,18 @@
 package com.han.view.home;
 
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
 
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 
 import com.han.pojo.User;
 import com.han.view.home.internal_frame.*;
 import com.han.view.imagepanel.HomePanel;
 import com.han.view.login.Login;
-import java.awt.BorderLayout;
-import java.awt.Toolkit;
-import java.awt.Color;
+
 
 public class Home extends JFrame {
 
@@ -117,19 +107,9 @@ public class Home extends JFrame {
 		jMenuItemAddAccount.setIcon(new ImageIcon("./images/操作_1.png"));
 		mnNewMenu.addSeparator();
 
-//		jMenuItemDeleteAccount = new JMenuItem("删除用户");
-//		mnNewMenu.add(jMenuItemDeleteAccount);
-//		jMenuItemDeleteAccount.setIcon(new ImageIcon("./images/操作_2.png"));
-//		mnNewMenu.addSeparator();
-
 		jMenuItemUpdateAccount = new JMenuItem("修改用户");
 		mnNewMenu.add(jMenuItemUpdateAccount);
 		jMenuItemUpdateAccount.setIcon(new ImageIcon("./images/操作_1.png"));
-//		mnNewMenu.addSeparator();
-//
-//		jMenuItemFindAccount = new JMenuItem("查询用户");
-//		mnNewMenu.add(jMenuItemFindAccount);
-//		jMenuItemFindAccount.setIcon(new ImageIcon("./images/操作_2.png"));
 
 		mnNewMenu_1 = new JMenu("账户信用管理");
 
@@ -141,10 +121,6 @@ public class Home extends JFrame {
 		jMenuItemUpdateCredit = new JMenuItem("信用修改");
 		mnNewMenu_1.add(jMenuItemUpdateCredit);
 		jMenuItemUpdateCredit.setIcon(new ImageIcon("./images/操作_1.png"));
-
-//		mntmNewMenuItem_one = new JMenuItem("个人信息");
-//		mnNewMenu_1.add(mntmNewMenuItem_one);
-//		mntmNewMenuItem_one.setIcon(new ImageIcon("./images/操作_2.png"));
 
 		mnNewMenu_2 = new JMenu("账单管理");
 		menuBar.add(mnNewMenu_2);
@@ -213,9 +189,6 @@ public class Home extends JFrame {
 		mnNewMenu_6.add(jMenuItem_exit);
 		jMenuItem_exit.setIcon(new ImageIcon("./images/退出_1.png"));
 
-
-
-
 		String path = System.getProperty("user.dir")+"\\src"+"\\img\\模糊背景_1.jpg";
 		panel = new HomePanel(path);
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -233,21 +206,33 @@ public class Home extends JFrame {
 		jMenuItem_personal_center.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("进入个人中心......");
+//				System.out.println("进入个人中心......");
+				PersonalCenterFrame jquery = new PersonalCenterFrame(user);
+				JInternalFrame repaymentFrame = jquery.init();
+				panel.add(repaymentFrame, BorderLayout.CENTER);
+				repaymentFrame.setVisible(true);
 			}
 		});
 
 		jMenuItemCallForMoney.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("打开催款界面，催款成功....");
+//				System.out.println("打开催款界面，催款成功....");
+				FindArrearsBillFrame jquery = new FindArrearsBillFrame(user);
+				JInternalFrame repaymentFrame = jquery.init();
+				panel.add(repaymentFrame, BorderLayout.CENTER);
+				repaymentFrame.setVisible(true);
 			}
 		});
 
 		jMenuItemRepayment.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("打开还款页面，还款成功....");
+//				System.out.println("打开还款页面，还款成功....");
+				RepaymentFrame jquery = new RepaymentFrame(user);
+				JInternalFrame repaymentFrame = jquery.init();
+				panel.add(repaymentFrame, BorderLayout.CENTER);
+				repaymentFrame.setVisible(true);
 			}
 		});
 
@@ -319,19 +304,7 @@ public class Home extends JFrame {
 				updateAccountCredit.setVisible(true);
 			}
 		});
-//		mntmNewMenuItem_one.addActionListener(new ActionListener() {
-//
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				// TODO Auto-generated method stub
-//				System.out.println("进入个人信息成功");
-//				jInternalFrame_pManagement_one internalFrame = new jInternalFrame_pManagement_one();
-//				internalFrame.setUs(us);
-//				JInternalFrame internalFrame_1 = internalFrame.init();
-//				panel.add(internalFrame_1, BorderLayout.CENTER);
-//				internalFrame_1.setVisible(true);
-//			}
-//		});
+
 		jMenuItem_exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int n = JOptionPane.showConfirmDialog(panel, "确定退出登录?", "温馨提示",JOptionPane.YES_NO_OPTION);//返回的是按钮的index  i=0或者1

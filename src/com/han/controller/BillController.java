@@ -1,6 +1,7 @@
 package com.han.controller;
 
 import com.han.pojo.Bill;
+import com.han.pojo.User;
 import com.han.service.BillService;
 import sun.security.util.DerEncoder;
 
@@ -32,6 +33,21 @@ public class BillController {
     }
     public Object[][] billListByID(String id) {
         return billService.billListByID(id);
+    }
+
+    public Object[][] billRepaymentListByAccount(String account) {
+        return billService.billRepaymentListByAccount(account);
+    }
+    public int billRepayment(String id, String repayMoney,User user) {
+        return billService.billRepayment(id,repayMoney,user);
+    }
+
+    public Object[][] arrearsBillList() {
+        return billService.arrearsBillList();
+    }
+
+    public Object[][] arrearsBillListByID(String id) {
+        return billService.arrearsBillListByID(id);
     }
 
 }

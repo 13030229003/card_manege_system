@@ -1,5 +1,6 @@
 package com.han.view.home.internal_frame;
 
+import com.han.controller.BillController;
 import com.han.controller.UserController;
 import com.han.pojo.User;
 import com.han.view.imagepanel.HomePanel;
@@ -8,34 +9,45 @@ import com.han.view.imagepanel.MyTable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-
 import java.awt.*;
 import java.awt.event.*;
-public class UpdateAccountFrame {
+
+public class RepaymentFrame {
 
 	private UserController userController = new UserController();
 
-	private static JTextField textField_name;
-	private static JTextField textField_available;
+	private BillController billController = new BillController();
+
+	private User user;
+
+	private static JTextField textField_bill_id;
+	private static JTextField textField_repay_money;
+
+	private static JTextField textField_storage_money;
 	private static JTable table;
 	private static JPanel panel;
 	private JPanel panel_1;
-	private static JButton btn_delete;
 	private static JButton btn_find;
-	private static JButton btn_update;
+	private static JButton btn_repayment;
 	private static JComboBox comboBox;
 	private static JScrollPane scrollPane;
 
 	static int selectedRow;
-	static String find_name = "", find_account = "", find_available = "", find_status = "",find_storage = "";
+	static String find_bill_id= "",find_repay_money="";
 	static DefaultTableModel tabModel;
 	private static JTextField textField_account;
-	private static JTextField textField_find;
+
+	public RepaymentFrame() {
+	}
+
+	public RepaymentFrame(User user) {
+		this.user = user;
+	}
 
 	/**
 	 * 管理员垃圾处理界面的事件监听器
 	 */
-	private void addActionListener() {
+	private void addactionListener() {
 		table.addMouseListener(new MouseListener() {
 
 			@Override
@@ -68,104 +80,50 @@ public class UpdateAccountFrame {
 				if (e.getButton() == e.BUTTON1) {
 					selectedRow = table.getSelectedRow(); // 获行的索引
 					// 从表格中拉出来数据
-					find_name = tabModel.getValueAt(selectedRow, 0).toString();
-					find_account = tabModel.getValueAt(selectedRow, 1).toString();
-					find_available = tabModel.getValueAt(selectedRow, 3).toString();
-					find_storage = tabModel.getValueAt(selectedRow, 6).toString();
-					find_status = tabModel.getValueAt(selectedRow, 7).toString();
 
-					textField_name.setText(find_name);
-					textField_account.setText(find_account);
-					textField_available.setText(find_available);
-					comboBox.setSelectedIndex(Integer.valueOf(find_status));
+					textField_bill_id.setText(tabModel.getValueAt(selectedRow, 0).toString());
+					textField_account.setText(tabModel.getValueAt(selectedRow, 2).toString());
+					textField_repay_money.setText(tabModel.getValueAt(selectedRow, 3).toString());
+					find_bill_id = tabModel.getValueAt(selectedRow, 0).toString();
+					find_repay_money = tabModel.getValueAt(selectedRow, 3).toString();
+					comboBox.setSelectedIndex(Integer.valueOf(tabModel.getValueAt(selectedRow, 4).toString()));
 				}
 			}
 		});
 
-		// 查询输入按回车触发按钮的点击事件
-		textField_find.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				btn_find.doClick();
-			}
-		});
-
-
-
-		btn_update.addActionListener(new ActionListener() {
+		btn_repayment.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String new_cla = comboBox.getSelectedItem().toString();
-				if(new_cla.equals("----")) {
-					JOptionPane.showMessageDialog(panel, "用户状态选择错误！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
+				if(new_cla.equals("---")) {
+					JOptionPane.showMessageDialog(panel, "请选择还款账单！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 				}else {
 
-					if (find_name.length() == 0 || find_account.length() == 0 || textField_available.getText().length() == 0) {
-						JOptionPane.showMessageDialog(panel, "用户可用额度修改错误！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
-					}
-					else {
-						int n = JOptionPane.showConfirmDialog(panel, "确定修改帐号信息吗?", "温馨提示",JOptionPane.YES_NO_OPTION);//返回的是按钮的index  i=0或者1
-						if(n==0) {
+					int n = JOptionPane.showConfirmDialog(panel, "确定还款吗?", "温馨提示",JOptionPane.YES_NO_OPTION);//返回的是按钮的index  i=0或者1
+					if(n==0) {
+						int i = billController.billRepayment(find_bill_id, find_repay_money, user);
+						if (i > 0) {
 
-							// 更新用户操作
-							User user = new User();
-							user.setAccount(find_account);
-							user.setAvailableCredit(textField_available.getText());
-							user.setStorageAmount(find_storage);
-							user.setStatus(String.valueOf(comboBox.getSelectedIndex()));
-//							System.out.println(user);
-							int i = userController.userUpdateByAccount(user);
-
-							if (i > 0) {
-								Object[] columnNames = { "用户名", "账号", "总信用额", "可用信用额", "可取现用额", "欠款金额", "预存金额", "状态" };
-								Object rowData[][] = userController.userList();
-								tabModel = new DefaultTableModel(rowData, columnNames);
-								table.setModel(tabModel);
-								table.setEnabled(true);
-
-							} else {
-								JOptionPane.showMessageDialog(panel, "用户修改失败！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
-							}
-						}
-					}
-				}
-
-			}
-		});
-		btn_delete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-
-				if (find_name.length() == 0 || find_account.length() == 0 || textField_available.getText().length() == 0) {
-					JOptionPane.showMessageDialog(panel, "用户可用额度修改错误！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
-				} else {
-
-					int n = JOptionPane.showConfirmDialog(panel, "确定删除帐号信息吗?", "温馨提示",JOptionPane.YES_NO_OPTION);//返回的是按钮的index  i=0或者1
-
-					if(n==0) { // 确认删除
-						User user = new User();
-						user.setAccount(find_account);
-						int userDelete = userController.userDelete(user);
-						if (userDelete > 0) {
-							JOptionPane.showMessageDialog(panel, "用户删除成功！！", "温馨提示",JOptionPane.INFORMATION_MESSAGE);
-							Object[] columnNames = { "用户名", "账号", "总信用额", "可用信用额", "可取现用额", "欠款金额", "预存金额", "状态" };
-							Object rowData[][] = userController.userList();
+							Object[] columnNames = { "账单号", "用户名", "账号", "金额", "账单类型", "状态" };
+							Object rowData[][] = billController.billRepaymentListByAccount(user.getAccount());
 							tabModel = new DefaultTableModel(rowData, columnNames);
 							table.setModel(tabModel);
 							table.setEnabled(true);
 
-							textField_name.setText("");
+							// 更新桌面用户显示 的 预存余额。
+							User user1 = userController.userSelectByAccount(RepaymentFrame.this.user);
+							user = user1;
+							textField_storage_money.setText(user1.getStorageAmount());
+
+							comboBox.setSelectedIndex(0);
+							textField_bill_id.setText("");
 							textField_account.setText("");
-							textField_available.setText("");
-							comboBox.setSelectedIndex(2);
+							textField_repay_money.setText("");
 
 						} else {
-							JOptionPane.showMessageDialog(panel, "用户删除失败！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
+							JOptionPane.showMessageDialog(panel, "还款失败，请确保预存余额足够！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 						}
-
-					} else { // 取消删除
-
-						JOptionPane.showMessageDialog(panel, "用户删除操作取消！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
-
 					}
+
 				}
 
 			}
@@ -173,15 +131,9 @@ public class UpdateAccountFrame {
 		btn_find.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				Object[] columnNames = { "用户名", "账号", "总信用额", "可用信用额", "可取现用额", "欠款金额", "预存金额", "状态" };
+				Object[] columnNames = { "账单号", "用户名", "账号", "金额", "账单类型", "状态" };
 				Object rowData[][] = null;
-				if (textField_find.getText().length() == 0) {
-
-					rowData = userController.userList();
-
-				} else {
-					rowData = userController.userListByLike(textField_find.getText());
-				}
+				rowData = billController.billRepaymentListByAccount(user.getAccount());
 
 				tabModel = new DefaultTableModel(rowData, columnNames);
 				table.setModel(tabModel);
@@ -194,9 +146,6 @@ public class UpdateAccountFrame {
 			public void itemStateChanged(ItemEvent e) {
 				// TODO Auto-generated method stub
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-					// 选择的下拉框选项
-//					textField_cla.setText(e.getItem().toString());
-//					System.out.println(e.getItem().toString());
 
 				}
 			}
@@ -210,7 +159,7 @@ public class UpdateAccountFrame {
 	 */
 	public JInternalFrame init() {
 		// 创建一个内部窗口
-		JInternalFrame internalFrame = new JInternalFrame("账户资料修改", // title
+		JInternalFrame internalFrame = new JInternalFrame("还款界面", // title
 				false, // resizable
 				true, // closable
 				false, // maximizable
@@ -227,8 +176,8 @@ public class UpdateAccountFrame {
 		panel = new HomePanel(path);
 		panel.setBounds(0, 0, 999, 257);
 		// 表头（列名）
-		Object[] columnNames = { "用户名", "账号", "总信用额", "可用信用额", "可取现用额", "欠款金额", "预存金额", "状态" };
-		Object rowData[][] = { { " ", " ", " ", " ", " ", " ", " ", " " } };
+		Object[] columnNames = { "账单号", "用户名", "账号", "金额", "账单类型", "状态" };
+		Object rowData[][] = { { " ", " ", " ", " ", " ", " " } };
 		table = new MyTable(rowData, columnNames);
 		// 设置表格内容颜色
 		table.setForeground(Color.BLACK); // 字体颜色
@@ -276,34 +225,34 @@ public class UpdateAccountFrame {
 		internalFrame.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 
-		JLabel lblNewLabel = new JLabel("用户名：");
+		JLabel lblNewLabel = new JLabel("账单号：");
 		lblNewLabel.setBounds(14, 9, 90, 18);
 		panel_1.add(lblNewLabel);
 
-		// 用户名文本框
-		textField_name = new JTextField();
-		textField_name.setEditable(false);
-		textField_name.setBounds(90, 6, 186, 24);
-		textField_name.setColumns(10);
-		panel_1.add(textField_name);
+		// 账单号文本框
+		textField_bill_id = new JTextField();
+		textField_bill_id.setEditable(false);
+		textField_bill_id.setBounds(90, 6, 186, 24);
+		textField_bill_id.setColumns(10);
+		panel_1.add(textField_bill_id);
 
+		JLabel jLabel_storageAmount = new JLabel("账号预存余额：");
+		jLabel_storageAmount.setBounds(604, 9, 150, 18);
+		panel_1.add(jLabel_storageAmount);
 
-		// 查询文本框
-		textField_find = new JTextField();
-		textField_find.setBounds(600, 6, 200, 30);
-		panel_1.add(textField_find);
-		textField_find.setColumns(10);
-
+		// 显示账号预存余额
+		textField_storage_money = new JTextField();
+		textField_storage_money.setText(userController.userSelectByAccount(user).getStorageAmount());
+		textField_storage_money.setEditable(false);
+		textField_storage_money.setBounds(730, 6, 100, 24);
+		textField_storage_money.setColumns(10);
+		panel_1.add(textField_storage_money);
 
 		// 查询按钮
 		btn_find = new JButton("查询");
-		btn_find.setBounds(600, 50, 111, 27);
+		btn_find.setBounds(300, 6, 111, 27);
 		btn_find.setIcon(new ImageIcon("./images/垃圾查询_1.png"));
 		panel_1.add(btn_find);
-
-
-
-
 
 		JLabel lblNewLabel_1 = new JLabel("账  户：");
 		lblNewLabel_1.setBounds(14, 58, 90, 18);
@@ -315,38 +264,35 @@ public class UpdateAccountFrame {
 		panel_1.add(textField_account);
 		textField_account.setColumns(10);
 
-		JLabel lblNewLabel_2 = new JLabel("可用额度：");
+		JLabel lblNewLabel_2 = new JLabel("还款金额：");
 		lblNewLabel_2.setBounds(14, 107, 90, 18);
 		panel_1.add(lblNewLabel_2);
 
-		textField_available = new JTextField();
-		textField_available.setBounds(90, 104, 186, 24);
-		textField_available.setColumns(10);
-		panel_1.add(textField_available);
+		textField_repay_money = new JTextField();
+		textField_repay_money.setEditable(false);
+		textField_repay_money.setBounds(90, 104, 186, 24);
+		textField_repay_money.setColumns(10);
+		panel_1.add(textField_repay_money);
 
-		btn_delete = new JButton("删除用户");
-		btn_delete.setBounds(300, 200, 130, 27);
-		btn_delete.setIcon(new ImageIcon("./images/垃圾删除_2.png"));
-		panel_1.add(btn_delete);
-
-		btn_update = new JButton("修改用户");
-		btn_update.setBounds(146, 200, 130, 27); //336, 149, 111, 27
-		btn_update.setIcon(new ImageIcon("./images/垃圾更新_1.png"));
-		panel_1.add(btn_update);
+		btn_repayment = new JButton("还款");
+		btn_repayment.setBounds(146, 200, 130, 27); //336, 149, 111, 27
+		btn_repayment.setIcon(new ImageIcon("./images/垃圾更新_1.png"));
+		panel_1.add(btn_repayment);
 
 
-		JLabel lblNewLabel_3 = new JLabel("用户状态：");
+		JLabel lblNewLabel_3 = new JLabel("账单类型：");
 		lblNewLabel_3.setBounds(14, 153, 90, 18);
 		panel_1.add(lblNewLabel_3);
 
 		comboBox = new JComboBox();
 		comboBox.setBounds(90, 150, 186, 24);
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"冻结",  "开通", "----" }));
+		comboBox.setModel(new DefaultComboBoxModel(new String[] { "---","消费",  "---", "取现" }));
 		// 设置默认选中的条目
+		comboBox.setEditable(false);
 		comboBox.setSelectedIndex(2);
 		panel_1.add(comboBox);
 
-		addActionListener();
+		addactionListener();
 		return internalFrame;
 
 	}

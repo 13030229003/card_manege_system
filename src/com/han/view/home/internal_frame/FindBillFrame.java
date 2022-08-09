@@ -1,7 +1,6 @@
 package com.han.view.home.internal_frame;
 
 import com.han.controller.BillController;
-import com.han.pojo.Bill;
 import com.han.pojo.User;
 import com.han.view.imagepanel.HomePanel;
 import com.han.view.imagepanel.MyTable;
@@ -17,8 +16,6 @@ public class FindBillFrame {
 
 	private User user;
 
-	private static JTextField textField_name;
-	private static JTextField textField_account;
 	private static JTextField textField_add_bill;
 	private static JPanel panel;
 	private static JPanel panel_1;

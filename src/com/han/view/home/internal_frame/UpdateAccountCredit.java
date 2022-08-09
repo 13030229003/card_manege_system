@@ -38,12 +38,11 @@ public class UpdateAccountCredit {
     static DefaultTableModel tabModel;
     private static JTextField textField_account;
     private static JTextField textField_find;
-    private static JComboBox comboBox_query;
 
     /**
      * 管理员垃圾处理界面的事件监听器
      */
-    private void addactionListener() {
+    private void addActionListener() {
         table.addMouseListener(new MouseListener() {
 
             @Override
@@ -354,7 +353,7 @@ public class UpdateAccountCredit {
         comboBox.setSelectedIndex(2);
         panel_1.add(comboBox);
 
-        addactionListener();
+        addActionListener();
         return internalFrame;
 
     }

@@ -40,6 +40,9 @@ public class UserController {
     public int userDelete(User user) {
         return userService.userDelete(user);
     }
+    public int userStorageAmountCharge(User user,String money) {
+        return userService.userStorageAmountCharge(user,money);
+    }
 
 
 }
