@@ -20,11 +20,7 @@ public class Home extends JFrame {
 	private JPanel panel;
 	private JMenuItem jMenuItemAddAccount;
 	private JMenuItem jMenuItemUpdateAccount;
-
-
 	private JMenuItem jMenuItemUpdateCredit;
-
-
 
 	private JMenu mnNewMenu_1;
 	private JMenu mnNewMenu_2;
@@ -114,9 +110,9 @@ public class Home extends JFrame {
 
 		mnNewMenu_1 = new JMenu("账户信用管理");
 
-		if ("1".equals(user.getIdentity())){
-			menuBar.add(mnNewMenu_1);
-		}
+//		if ("1".equals(user.getIdentity())){
+//			menuBar.add(mnNewMenu_1);
+//		}
 		mnNewMenu_1.setIcon(new ImageIcon("./images/菜单_1.png"));
 
 		jMenuItemUpdateCredit = new JMenuItem("信用修改");

@@ -2,7 +2,6 @@ package com.han.view.login;
 
 import com.han.controller.UserController;
 import com.han.pojo.User;
-import com.han.service.UserService;
 import com.han.view.home.Home;
 import com.han.view.imagepanel.HomePanel;
 
@@ -11,8 +10,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class Login extends JFrame {
 

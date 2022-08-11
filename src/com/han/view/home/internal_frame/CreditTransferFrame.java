@@ -22,6 +22,8 @@ public class CreditTransferFrame {
 	private static JTextField textField_user_name;
 	private static JTextField textField_add_storage_amount;
 
+	private JInternalFrame internalFrame;
+
 	public CreditTransferFrame() {
 	}
 
@@ -84,7 +86,6 @@ public class CreditTransferFrame {
 			}
 		});
 
-
 		btn_add_storage_amount.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -115,18 +116,29 @@ public class CreditTransferFrame {
 
 								} else {
 
-									User toUser = new User();
-									toUser.setAccount(textField_account.getText());
-									toUser.setName(textField_user_name.getText());
-									int update = userController.userTransfer(user, toUser, textField_add_storage_amount.getText());
+									// 显示输入对话框, 返回输入的内容
+									String inputContent = JOptionPane.showInputDialog(
+											panel_1,
+											"输入你的密码:",
+											""
+									);
+									if (user.getPassword().equals(inputContent)) {
+										User toUser = new User();
+										toUser.setAccount(textField_account.getText());
+										toUser.setName(textField_user_name.getText());
+										int update = userController.userTransfer(user, toUser, textField_add_storage_amount.getText());
 
-									if (update == 1) {
+										if (update == 1) {
 
-										JOptionPane.showMessageDialog(panel_1, "转账成功！！", "温馨提示",JOptionPane.INFORMATION_MESSAGE);
+											JOptionPane.showMessageDialog(panel_1, "转账成功！！", "温馨提示",JOptionPane.INFORMATION_MESSAGE);
 
+										} else {
+											JOptionPane.showMessageDialog(panel_1, "转账失败！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
+										}
 									} else {
-										JOptionPane.showMessageDialog(panel_1, "转账失败！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
+										JOptionPane.showMessageDialog(panel_1, "密码错误！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 									}
+
 								}
 							}
 						}
@@ -148,7 +160,7 @@ public class CreditTransferFrame {
 
 
 		// 创建一个内部窗口
-		JInternalFrame internalFrame = new JInternalFrame("信用转账界面", // title
+		internalFrame = new JInternalFrame("信用转账界面", // title
 				false, // resizable
 				true, // closable
 				false, // maximizable
@@ -208,9 +220,11 @@ public class CreditTransferFrame {
 		panel_1.add(btn_add_storage_amount);
 
 
-
 		addActionListener();
 		return internalFrame;
 
 	}
+
+
+
 }

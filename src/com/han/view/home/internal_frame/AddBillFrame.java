@@ -39,15 +39,28 @@ public class AddBillFrame {
 	 * 录入界面按钮注册事件监听器
 	 */
 	private void addActionListener() {
+
+		textField_add_bill.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				btn_add_bill.doClick();
+			}
+		});
+
 		btn_add_bill.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
 				if (textField_add_bill.getText().length() < 1) {
 					JOptionPane.showMessageDialog(panel, "输入为空！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 				} else {
-					int n = JOptionPane.showConfirmDialog(panel, "确定消费账单吗?", "温馨提示",JOptionPane.YES_NO_OPTION);//返回的是按钮的index  i=0或者1
-
-					if(n==0) {
+//					int n = JOptionPane.showConfirmDialog(panel, "确定消费账单吗?", "温馨提示",JOptionPane.YES_NO_OPTION);//返回的是按钮的index  i=0或者1
+					// 显示输入对话框, 返回输入的内容
+					String inputContent = JOptionPane.showInputDialog(
+							panel,
+							"输入你的密码:",
+							""
+					);
+					if (user.getPassword().equals(inputContent)) {
 						Bill bill = new Bill();
 						bill.setUserName(user.getName());
 						bill.setAccount(user.getAccount());
@@ -70,7 +83,10 @@ public class AddBillFrame {
 						} else {
 							JOptionPane.showMessageDialog(panel, "消费失败！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 						}
+					} else {
+						JOptionPane.showMessageDialog(panel, "密码错误！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 					}
+
 				}
 			}
 		});

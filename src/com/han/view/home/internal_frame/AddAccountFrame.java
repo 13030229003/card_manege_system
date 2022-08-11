@@ -136,8 +136,6 @@ public class AddAccountFrame {
 		//因此为了保证透明，如果你对column额外指定了渲染器，那么在额外的渲染器里也应该设置透明
 		table.setDefaultRenderer(Object.class,render);
 
-
-
 		// 把 表格 放到 滚动面板 中（表头将自动添加到滚动面板顶部）
 		scrollPane = new JScrollPane(table);
 		scrollPane.getViewport().setOpaque(false);//将JScrollPane设置为透明

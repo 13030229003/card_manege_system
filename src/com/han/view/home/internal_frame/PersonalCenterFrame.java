@@ -37,6 +37,13 @@ public class PersonalCenterFrame {
 	 */
 	private void addActionListener() {
 
+		textField_add_storage_amount.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				btn_add_storage_amount.doClick();
+			}
+		});
+
 		btn_add_storage_amount.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -50,16 +57,27 @@ public class PersonalCenterFrame {
 						System.out.println("请输入大于零的数！！！");
 					} else {
 
-						int i = userController.userStorageAmountCharge(user, money);
-						if (i > 0) {
+						String inputContent = JOptionPane.showInputDialog(
+								panel_1,
+								"输入你的密码:",
+								""
+						);
+						if (user.getPassword().equals(inputContent)) {
+							int i = userController.userStorageAmountCharge(user, money);
+							if (i > 0) {
 //							System.out.println("充值成功。。充值金额：" + money);
-							textField_add_storage_amount.setText("");
-							user = userController.userSelectByAccount(user);
-							textField_storage_amount.setText(user.getStorageAmount());
-							textField_total_credit.setText(user.getTotalCredit());
+								textField_add_storage_amount.setText("");
+								user = userController.userSelectByAccount(user);
+								textField_storage_amount.setText(user.getStorageAmount());
+								textField_total_credit.setText(user.getTotalCredit());
+							} else {
+								System.out.println("预存失败!!!");
+							}
 						} else {
-							System.out.println("充值失败!!!");
+							JOptionPane.showMessageDialog(panel_1, "密码错误！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 						}
+
+
 					}
 				}
 			}
@@ -171,9 +189,6 @@ public class PersonalCenterFrame {
 		textField_available_credit.setBounds(110, 203, 130, 24);
 		textField_available_credit.setColumns(10);
 		panel_1.add(textField_available_credit);
-
-
-
 
 		JLabel lblNewLabel_6 = new JLabel("预存金额：");
 		lblNewLabel_6.setBounds(14, 256, 100, 18);

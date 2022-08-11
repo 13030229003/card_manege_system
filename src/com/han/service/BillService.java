@@ -49,78 +49,7 @@ public class BillService {
                    Math.floor(Double.valueOf(user.getAvailableCredit())/1.1)
                    ,user.getAccount());
 
-
            return 1;
-
-
-
-
-
-
-
-
-
-
-//
-//       /**
-//        * 1、判断用户预存金额是否大于还款金额。大于就可以还款，不够提示余额不足。
-//        *
-//        * 2、 够还款
-//        *           1、将账单状态设置为 0， 可取余额 增加为  还款金额/1.1  ，预存金额 = 预存金额 - 还款金额。
-//        *           2、生成新的还款订单。
-//        */
-//       // 根据用户帐号获取数据库最新的用户信息，主要是获取用户的预存金额。
-//       user = userService.userGetByAccount(user.getAccount());
-//
-//
-//
-////       System.out.println(id);
-////       System.out.println(repayMoney);
-////       System.out.println(user);
-//
-//       Double storageAmount = Double.valueOf(user.getStorageAmount());
-//       Double repayMoney_ = Double.valueOf(repayMoney);
-//
-//       int addMoney = (int) Math.ceil(repayMoney_/1.1);
-//       if (storageAmount >= repayMoney_) {
-//        // 预存余额够，进行还款
-//           /**
-//            * 1、将账单状态设置为 0，
-//            * 可取余额 desirableCredit 增加为  还款金额/1.1
-//            *  预存金额 storageAmount = 预存金额 - 还款金额。
-//            *  欠款金额 arrearsAmount = 欠款金额 - 还款金额。
-//            *
-//            */
-//           String repaySql = "update bill set status=0 where id=?";
-//           // 设置订单 状态为 0
-//           int repayIndex = billDAO.update(repaySql, id);
-////
-//           // 更新用户的可取余额 和 预存金额   根据用户account
-//           String userSql = "update user set desirableCredit=desirableCredit+?,storageAmount=storageAmount-?,arrearsAmount=arrearsAmount-? where account=?";
-//           // 这里直接使用billDAO来执行更新用户的操作。
-//           int userUpdateIndex = billDAO.update(userSql, addMoney, repayMoney, repayMoney,user.getAccount());
-//
-//           /**
-//            * 1、生成新的 还款 账单。
-//            */
-//           String billID = "P" + DateUtil.getNowTime2();
-//           String addBillSql = "insert into bill(id,userName,account,amount,type) values(?,?,?,?,?)";
-//           int billInsertIndex = billDAO.update(addBillSql,billID,user.getName(),user.getAccount(), repayMoney, "2");
-//
-//           if (repayIndex > 0 && userUpdateIndex > 0 && billInsertIndex > 0) {
-////               System.out.println("更新成功。。。。。。。");
-//               return 1;
-//           } else {
-////               System.out.println("更新失败。。。。。。。");
-//               return 0;
-//           }
-//
-//
-//       } else {
-//           // 帐号预存余额不够还款，还款失败
-//           System.out.println("还款失败，预存余额不足。。。。。");
-//           return 0;
-//       }
    }
 
     /**
@@ -190,8 +119,6 @@ public class BillService {
         return objectList;
 
     }
-
-
 
 
     /**
@@ -393,7 +320,6 @@ public class BillService {
                         Double.valueOf(user.getAvailableCredit()) + Double.valueOf(user.getStorageAmount()),(int)(billAmount*1.1),user.getAccount());
 
                 return bill;
-
 
             } else {
                 return null;

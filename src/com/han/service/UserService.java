@@ -27,9 +27,6 @@ public class UserService {
      */
     public int userTransfer(User fromUser,User toUser,String money) {
         toUser = userGetByAccount(toUser.getAccount());
-//        System.out.println(fromUser);
-//        System.out.println(toUser);
-//        System.out.println(money);
 
         /**fromUser
          * 1、减少自己的可用额度：  可用额度 - 转账金额

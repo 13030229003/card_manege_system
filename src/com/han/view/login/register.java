@@ -2,7 +2,6 @@ package com.han.view.login;
 
 import com.han.controller.UserController;
 import com.han.pojo.User;
-import com.han.service.UserService;
 import com.han.view.imagepanel.HomePanel;
 
 import javax.swing.JFrame;

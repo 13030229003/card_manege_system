@@ -212,7 +212,7 @@ public class UpdateAccountCreditFrame {
     }
 
     /**
-     * 初始化管理员的垃圾处理界面
+     * 初始化
      *
      */
     public JInternalFrame init() {
@@ -294,23 +294,17 @@ public class UpdateAccountCreditFrame {
         textField_name.setColumns(10);
         panel_1.add(textField_name);
 
-
         // 查询文本框
         textField_find = new JTextField();
         textField_find.setBounds(600, 6, 200, 30);
         panel_1.add(textField_find);
         textField_find.setColumns(10);
 
-
         // 查询按钮
         btn_find = new JButton("查询");
         btn_find.setBounds(600, 50, 111, 27);
         btn_find.setIcon(new ImageIcon("./images/垃圾查询_1.png"));
         panel_1.add(btn_find);
-
-
-
-
 
         JLabel lblNewLabel_1 = new JLabel("账  户：");
         lblNewLabel_1.setBounds(14, 58, 90, 18);

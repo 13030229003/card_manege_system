@@ -15,7 +15,7 @@ import java.util.Properties;
  * @Author XSH
  * @Date 2022-08-06 12:08
  * @Version 1.0
- * 描述：  使用druid连接池获取数据库连接。
+ * 描述：  使用druid连接池获取数据库连接。和使用dbUtils工具包封装返回数据。
  **/
 public class JDBCUtilsByDruid {
 
