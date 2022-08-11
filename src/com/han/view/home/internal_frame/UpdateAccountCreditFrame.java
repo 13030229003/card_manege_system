@@ -18,7 +18,7 @@ import java.awt.event.*;
  * @Version 1.0
  * 描述：
  **/
-public class UpdateAccountCredit {
+public class UpdateAccountCreditFrame {
 
     private UserController userController = new UserController();
 

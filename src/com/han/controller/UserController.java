@@ -44,5 +44,10 @@ public class UserController {
         return userService.userStorageAmountCharge(user,money);
     }
 
+    public int userTransfer(User fromUser,User toUser,String money) {
+
+        return userService.userTransfer(fromUser,toUser,money);
+    }
+
 
 }

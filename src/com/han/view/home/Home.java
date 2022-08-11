@@ -42,6 +42,7 @@ public class Home extends JFrame {
 
 
 	private JMenuItem jMenuItem_exit;
+	private JMenuItem jMenuItem_credit_transfer;
 	private JMenuItem jMenuItem_personal_center;
 
 	/**
@@ -185,9 +186,17 @@ public class Home extends JFrame {
 		jMenuItem_personal_center.setIcon(new ImageIcon("./images/操作_1.png"));
 
 
+		jMenuItem_credit_transfer = new JMenuItem("信用转账");
+		if ("0".equals(user.getIdentity())){
+			mnNewMenu_6.add(jMenuItem_credit_transfer);
+		}
+		jMenuItem_credit_transfer.setIcon(new ImageIcon("./images/操作_1.png"));
+
 		jMenuItem_exit = new JMenuItem("退出登录");
 		mnNewMenu_6.add(jMenuItem_exit);
 		jMenuItem_exit.setIcon(new ImageIcon("./images/退出_1.png"));
+
+
 
 		String path = System.getProperty("user.dir")+"\\src"+"\\img\\模糊背景_1.jpg";
 		panel = new HomePanel(path);
@@ -202,6 +211,18 @@ public class Home extends JFrame {
 	 * 菜单项的事件监听器
 	 */
 	public void setOncListener() {
+
+
+		jMenuItem_credit_transfer.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+//				System.out.println("打开信用转账页面....");
+				CreditTransferFrame jquery = new CreditTransferFrame(user);
+				JInternalFrame repaymentFrame = jquery.init();
+				panel.add(repaymentFrame, BorderLayout.CENTER);
+				repaymentFrame.setVisible(true);
+			}
+		});
 
 		jMenuItem_personal_center.addActionListener(new ActionListener() {
 			@Override
@@ -298,7 +319,7 @@ public class Home extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				UpdateAccountCredit jquery = new UpdateAccountCredit();
+				UpdateAccountCreditFrame jquery = new UpdateAccountCreditFrame();
 				JInternalFrame updateAccountCredit = jquery.init();
 				panel.add(updateAccountCredit, BorderLayout.CENTER);
 				updateAccountCredit.setVisible(true);

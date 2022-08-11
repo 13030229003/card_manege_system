@@ -97,10 +97,9 @@ public class RepaymentFrame {
 				if(new_cla.equals("---")) {
 					JOptionPane.showMessageDialog(panel, "请选择还款账单！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 				}else {
-
 					int n = JOptionPane.showConfirmDialog(panel, "确定还款吗?", "温馨提示",JOptionPane.YES_NO_OPTION);//返回的是按钮的index  i=0或者1
 					if(n==0) {
-						int i = billController.billRepayment(find_bill_id, find_repay_money, user);
+						int i = billController.billRepayment(find_bill_id, find_repay_money, user,textField_repay_money.getText());
 						if (i > 0) {
 
 							Object[] columnNames = { "账单号", "用户名", "账号", "金额", "账单类型", "状态" };
@@ -119,8 +118,6 @@ public class RepaymentFrame {
 							textField_account.setText("");
 							textField_repay_money.setText("");
 
-						} else {
-							JOptionPane.showMessageDialog(panel, "还款失败，请确保预存余额足够！！", "温馨提示",JOptionPane.WARNING_MESSAGE);
 						}
 					}
 

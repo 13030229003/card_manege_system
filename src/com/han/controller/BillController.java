@@ -20,6 +20,10 @@ public class BillController {
         return billService.billInsert(bill);
     }
 
+    public Bill billInsert02(Bill bill) {
+        return billService.billInsert02(bill);
+    }
+
     public Object[][] billListByAccount(String account) {
         return billService.billListByAccount(account);
     }
@@ -38,8 +42,8 @@ public class BillController {
     public Object[][] billRepaymentListByAccount(String account) {
         return billService.billRepaymentListByAccount(account);
     }
-    public int billRepayment(String id, String repayMoney,User user) {
-        return billService.billRepayment(id,repayMoney,user);
+    public int billRepayment(String id, String repayMoney,User user,String textMoney) {
+        return billService.billRepayment(id,repayMoney,user,textMoney);
     }
 
     public Object[][] arrearsBillList() {

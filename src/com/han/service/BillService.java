@@ -28,67 +28,99 @@ public class BillService {
      * @param id
      * @return
      */
-   public int billRepayment(String id,String repayMoney,User user) {
-
-       /**
-        * 1、判断用户预存金额是否大于还款金额。大于就可以还款，不够提示余额不足。
-        *
-        * 2、 够还款
-        *           1、将账单状态设置为 0， 可取余额 增加为  还款金额/1.1  ，预存金额 = 预存金额 - 还款金额。
-        *           2、生成新的还款订单。
-        */
-       // 根据用户帐号获取数据库最新的用户信息，主要是获取用户的预存金额。
-       user = userService.userGetByAccount(user.getAccount());
+   public int billRepayment(String id,String repayMoney,User user,String textMoney) {
 
 
 
-//       System.out.println(id);
-//       System.out.println(repayMoney);
-//       System.out.println(user);
+           String billSql01 = "update bill set status=0 where id=?";
+           billDAO.update(billSql01,id);
 
-       Double storageAmount = Double.valueOf(user.getStorageAmount());
-       Double repayMoney_ = Double.valueOf(repayMoney);
-
-       int addMoney = (int) Math.ceil(repayMoney_/1.1);
-       if (storageAmount >= repayMoney_) {
-        // 预存余额够，进行还款
-           /**
-            * 1、将账单状态设置为 0，
-            * 可取余额 desirableCredit 增加为  还款金额/1.1
-            *  预存金额 storageAmount = 预存金额 - 还款金额。
-            *  欠款金额 arrearsAmount = 欠款金额 - 还款金额。
-            *
-            */
-           String repaySql = "update bill set status=0 where id=?";
-           // 设置订单 状态为 0
-           int repayIndex = billDAO.update(repaySql, id);
-//
-           // 更新用户的可取余额 和 预存金额   根据用户account
-           String userSql = "update user set desirableCredit=desirableCredit+?,storageAmount=storageAmount-?,arrearsAmount=arrearsAmount-? where account=?";
-           // 这里直接使用billDAO来执行更新用户的操作。
-           int userUpdateIndex = billDAO.update(userSql, addMoney, repayMoney, repayMoney,user.getAccount());
-
-           /**
-            * 1、生成新的 还款 账单。
-            */
            String billID = "P" + DateUtil.getNowTime2();
            String addBillSql = "insert into bill(id,userName,account,amount,type) values(?,?,?,?,?)";
            int billInsertIndex = billDAO.update(addBillSql,billID,user.getName(),user.getAccount(), repayMoney, "2");
 
-           if (repayIndex > 0 && userUpdateIndex > 0 && billInsertIndex > 0) {
-//               System.out.println("更新成功。。。。。。。");
-               return 1;
-           } else {
-//               System.out.println("更新失败。。。。。。。");
-               return 0;
-           }
+           String userSql01 = "update user set arrearsAmount=arrearsAmount-?,availableCredit=availableCredit+? where account=?";
+           billDAO.update(userSql01,repayMoney,Math.ceil(Double.valueOf(repayMoney)/1.1),user.getAccount());
+
+           user = userService.userSelectByAccount(user);
+
+           String sql = "update user set totalCredit=?+?,desirableCredit=? where account=?";
+           billDAO.update(sql,Double.valueOf(user.getAvailableCredit()),Double.valueOf(user.getStorageAmount()),
+                   Math.floor(Double.valueOf(user.getAvailableCredit())/1.1)
+                   ,user.getAccount());
 
 
-       } else {
-           // 帐号预存余额不够还款，还款失败
-           System.out.println("还款失败，预存余额不足。。。。。");
-           return 0;
-       }
+           return 1;
+
+
+
+
+
+
+
+
+
+
+//
+//       /**
+//        * 1、判断用户预存金额是否大于还款金额。大于就可以还款，不够提示余额不足。
+//        *
+//        * 2、 够还款
+//        *           1、将账单状态设置为 0， 可取余额 增加为  还款金额/1.1  ，预存金额 = 预存金额 - 还款金额。
+//        *           2、生成新的还款订单。
+//        */
+//       // 根据用户帐号获取数据库最新的用户信息，主要是获取用户的预存金额。
+//       user = userService.userGetByAccount(user.getAccount());
+//
+//
+//
+////       System.out.println(id);
+////       System.out.println(repayMoney);
+////       System.out.println(user);
+//
+//       Double storageAmount = Double.valueOf(user.getStorageAmount());
+//       Double repayMoney_ = Double.valueOf(repayMoney);
+//
+//       int addMoney = (int) Math.ceil(repayMoney_/1.1);
+//       if (storageAmount >= repayMoney_) {
+//        // 预存余额够，进行还款
+//           /**
+//            * 1、将账单状态设置为 0，
+//            * 可取余额 desirableCredit 增加为  还款金额/1.1
+//            *  预存金额 storageAmount = 预存金额 - 还款金额。
+//            *  欠款金额 arrearsAmount = 欠款金额 - 还款金额。
+//            *
+//            */
+//           String repaySql = "update bill set status=0 where id=?";
+//           // 设置订单 状态为 0
+//           int repayIndex = billDAO.update(repaySql, id);
+////
+//           // 更新用户的可取余额 和 预存金额   根据用户account
+//           String userSql = "update user set desirableCredit=desirableCredit+?,storageAmount=storageAmount-?,arrearsAmount=arrearsAmount-? where account=?";
+//           // 这里直接使用billDAO来执行更新用户的操作。
+//           int userUpdateIndex = billDAO.update(userSql, addMoney, repayMoney, repayMoney,user.getAccount());
+//
+//           /**
+//            * 1、生成新的 还款 账单。
+//            */
+//           String billID = "P" + DateUtil.getNowTime2();
+//           String addBillSql = "insert into bill(id,userName,account,amount,type) values(?,?,?,?,?)";
+//           int billInsertIndex = billDAO.update(addBillSql,billID,user.getName(),user.getAccount(), repayMoney, "2");
+//
+//           if (repayIndex > 0 && userUpdateIndex > 0 && billInsertIndex > 0) {
+////               System.out.println("更新成功。。。。。。。");
+//               return 1;
+//           } else {
+////               System.out.println("更新失败。。。。。。。");
+//               return 0;
+//           }
+//
+//
+//       } else {
+//           // 帐号预存余额不够还款，还款失败
+//           System.out.println("还款失败，预存余额不足。。。。。");
+//           return 0;
+//       }
    }
 
     /**
@@ -203,66 +235,170 @@ public class BillService {
         user.setAccount(bill.getAccount());
         user = userService.userSelectByAccount(user);
 
-        Double userDesirableCredit = Double.valueOf(user.getDesirableCredit());   // 可取信用
-        Double userStorageAmount = Double.valueOf(user.getStorageAmount());   // 预存信用额
-        Double billAmount = Double.valueOf(bill.getAmount());
+        Double billAmount = Double.valueOf(bill.getAmount()); // 消费账单额度
+
+        Double availableCredit = Double.valueOf(user.getAvailableCredit()); // 用户可用余额
+
+        Double userStorageAmount = Double.valueOf(user.getStorageAmount()); // 用户预存余额
+        Double userDesirable = Double.valueOf(user.getDesirableCredit()); // 用户可取现余额 = 可用额度 *  1.1
+
 
         String id = "P" + DateUtil.getNowTime2();
         bill.setId(id);
 
-        if (userDesirableCredit > billAmount) {  // 可用余额足够
-
-            /**
-             * 1、生成账单
-             * 2、减少自己的可用余额，增加自己的欠款余额。
-             */
+        // 预存金额大于 0
+        if (userStorageAmount > 0) {
 
 
+            // 预存金额 大于 账单金额
+            if (userStorageAmount >= billAmount) {
 
-            String sqlInsert = "insert into bill(id,userName,account,amount,type) values(?,?,?,?,?)";
-            String sqlDec = "update user set desirableCredit=desirableCredit-?,arrearsAmount=arrearsAmount+? where account=?";
+                String userSql = "update user set storageAmount=storageAmount-? where account=?";
+                int update01 = billDAO.update(userSql, billAmount, user.getAccount());
 
-            int billInsert = billDAO.update(sqlInsert, bill.getId(), bill.getUserName(),bill.getAccount(), String.valueOf((int)(billAmount * 1.1)), bill.getType());
-            int desirableDec = billDAO.update(sqlDec, bill.getAmount(),String.valueOf((int)(billAmount * 1.1)), bill.getAccount());
+                String billSql = "insert into bill(id,userName,account,amount,type,status) values(?,?,?,?,?,?)";
+                int update02 = billDAO.update(billSql, id, user.getName(), user.getAccount(), billAmount, bill.getType(), 0);
 
-            if (billInsert == 1 && desirableDec == 1) {
-                bill.setAmount(String.valueOf((int)(billAmount * 1.1)));
+                user = userService.userSelectByAccount(user);
+
+                String sql = "update user set totalCredit=?+? where account=?";
+                int update = billDAO.update(sql, user.getAvailableCredit(), user.getStorageAmount(), user.getAccount());
+
+                return bill;
+
+                // 预存金额 + 可用额度 大于 账单额度
+            } else if (userStorageAmount + availableCredit >= billAmount) {
+                id = "SP" + DateUtil.getNowTime2();
+                String billSql = "insert into bill(id,userName,account,amount,type,status) values(?,?,?,?,?,?)";
+                int update01 = billDAO.update(billSql, id, user.getName(), user.getAccount(), userStorageAmount, bill.getType(), 0);
+                id = "P" + DateUtil.getNowTime2();
+                int update02 = billDAO.update(billSql, id, user.getName(), user.getAccount(), (int)((billAmount - userStorageAmount)*1.1), bill.getType(), 1);
+
+                String userSql01 = "update user set storageAmount=0,availableCredit=?-?,desirableCredit=? where account=?";
+                int update03 = billDAO.update(userSql01, availableCredit, (billAmount - userStorageAmount),
+                        (int) Math.ceil((availableCredit - (int) (billAmount - userStorageAmount)) / 1.1),
+                        user.getAccount());
+
+                user = userService.userSelectByAccount(user);
+
+                String sql = "update user set totalCredit=?+?,arrearsAmount=arrearsAmount+? where account=?";
+                int update = billDAO.update(sql, user.getAvailableCredit(), user.getStorageAmount(), (int)((billAmount - userStorageAmount)*1.1),user.getAccount());
+
                 return bill;
             } else {
                 return null;
             }
-        }else {
-            /**
-             * 可用额度 + 预存余额  <  账单消费      无法消费。
-             */
-            System.out.println("用户可用余额不够，无法消费！！！");
-            return null;
-        }
-        //         else if ((userDesirableCredit+userStorageAmount) > billAmount) { // 可用余额加上预存余额才够
-//
-//
-//            System.out.println("不够的在用户预存余额中扣除！！！");
-//
-//            String value = String.valueOf(billAmount - userDesirableCredit);
-//            /**
-//             * 1、生成账单
-//             * 2、减少自己的可用余额为零， 将剩下的在预存余额里面扣除。
-//             */
-//            String sqlInsert = "insert into bill(id,userName,account,amount,type) values(?,?,?,?,?)";
-//            String sqlDec = "update user set desirableCredit=0,storageAmount=storageAmount-? where account=?";
-//
-//            int billInsert = billDAO.update(sqlInsert, bill.getId(), bill.getUserName(),bill.getAccount() , String.valueOf((int)(billAmount * 1.1)), bill.getType());
-//            int desirableDec = billDAO.update(sqlDec, value, bill.getAccount());
-//
-//            if (billInsert == 1 && desirableDec == 1) {
-//                bill.setAmount(String.valueOf((int)(billAmount * 1.1)));
-//                return bill;
-//            } else {
-//                return null;
-//            }
-//
-//        }
 
+        } else {
+            if (availableCredit >= billAmount) {
+
+                String billSql = "insert into bill(id,userName,account,amount,type,status) values(?,?,?,?,?,?)";
+                int update01 = billDAO.update(billSql, id, user.getName(), user.getAccount(), (int)(billAmount*1.1),bill.getType(), 1);
+
+                String userSql = "update user set availableCredit=availableCredit-? where account=?";
+                int update02 = billDAO.update(userSql, billAmount, user.getAccount());
+
+                user = userService.userSelectByAccount(user);
+                String useSql02 = "update user set desirableCredit=?,totalCredit=?,arrearsAmount=arrearsAmount+? where account=?";
+                int update = billDAO.update(useSql02, Math.ceil(Double.valueOf(user.getAvailableCredit()) / 1.1),
+                        Double.valueOf(user.getAvailableCredit()) + Double.valueOf(user.getStorageAmount()),(int)(billAmount*1.1),user.getAccount());
+
+                return bill;
+
+
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * 返回 1：表示生成订单成功；   0 ： 生成失败。余额不足
+     * @param bill
+     * @return
+     */
+    public Bill billInsert02(Bill bill) {
+
+        // 获取用户的可用余额，足够生成账单就生成，不够就提示不够。
+        User user = new User();
+        user.setAccount(bill.getAccount());
+        user = userService.userSelectByAccount(user);
+
+        Double billAmount = Double.valueOf(bill.getAmount()); // 消费账单额度
+
+        Double availableCredit = Double.valueOf(user.getAvailableCredit()); // 用户可用余额
+
+        Double userStorageAmount = Double.valueOf(user.getStorageAmount()); // 用户预存余额
+        Double userDesirable = Double.valueOf(user.getDesirableCredit()); // 用户可取现余额 = 可用额度 *  1.1
+
+
+        String id = "P" + DateUtil.getNowTime2();
+        bill.setId(id);
+
+        // 预存金额大于 0
+        if (userStorageAmount > 0) {
+
+
+            // 预存金额 大于 账单金额
+            if (userStorageAmount >= billAmount) {
+
+                String userSql = "update user set storageAmount=storageAmount-? where account=?";
+                int update01 = billDAO.update(userSql, billAmount, user.getAccount());
+
+                String billSql = "insert into bill(id,userName,account,amount,type,status) values(?,?,?,?,?,?)";
+                int update02 = billDAO.update(billSql, id, user.getName(), user.getAccount(), billAmount, bill.getType(), 0);
+
+                user = userService.userSelectByAccount(user);
+
+                String sql = "update user set totalCredit=?+? where account=?";
+                int update = billDAO.update(sql, user.getAvailableCredit(), user.getStorageAmount(), user.getAccount());
+
+                return bill;
+
+                // 预存金额 + 可用额度 大于 账单额度
+            } else if (userStorageAmount + userDesirable >= billAmount) {
+                id = "SP" + DateUtil.getNowTime2();
+                String billSql = "insert into bill(id,userName,account,amount,type,status) values(?,?,?,?,?,?)";
+                int update01 = billDAO.update(billSql, id, user.getName(), user.getAccount(), userStorageAmount, bill.getType(), 0);
+                id = "P" + DateUtil.getNowTime2();
+                int update02 = billDAO.update(billSql, id, user.getName(), user.getAccount(), (int)((billAmount - userStorageAmount)*1.1), bill.getType(), 1);
+
+                String userSql01 = "update user set storageAmount=0,availableCredit=?-?,desirableCredit=? where account=?";
+                int update03 = billDAO.update(userSql01, availableCredit, (billAmount - userStorageAmount),
+                        (int) Math.ceil((availableCredit - (int) (billAmount - userStorageAmount)) / 1.1),
+                        user.getAccount());
+
+                user = userService.userSelectByAccount(user);
+
+                String sql = "update user set totalCredit=?+?,arrearsAmount=arrearsAmount+? where account=?";
+                int update = billDAO.update(sql, user.getAvailableCredit(), user.getStorageAmount(), (int)((billAmount - userStorageAmount)*1.1),user.getAccount());
+
+                return bill;
+            } else {
+                return null;
+            }
+
+        } else {
+            if (userDesirable >= billAmount) {
+
+                String billSql = "insert into bill(id,userName,account,amount,type,status) values(?,?,?,?,?,?)";
+                int update01 = billDAO.update(billSql, id, user.getName(), user.getAccount(), (int)(billAmount*1.1),bill.getType(), 1);
+
+                String userSql = "update user set availableCredit=availableCredit-? where account=?";
+                int update02 = billDAO.update(userSql, billAmount, user.getAccount());
+
+                user = userService.userSelectByAccount(user);
+                String useSql02 = "update user set desirableCredit=?,totalCredit=?,arrearsAmount=arrearsAmount+? where account=?";
+                int update = billDAO.update(useSql02, Math.ceil(Double.valueOf(user.getAvailableCredit()) / 1.1),
+                        Double.valueOf(user.getAvailableCredit()) + Double.valueOf(user.getStorageAmount()),(int)(billAmount*1.1),user.getAccount());
+
+                return bill;
+
+
+            } else {
+                return null;
+            }
+        }
     }
 
     /**

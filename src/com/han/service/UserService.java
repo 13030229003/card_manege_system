@@ -18,10 +18,51 @@ public class UserService {
     private UserDAO userDAO = new UserDAO();
 
 
+    /**
+     * 用户转账
+     * @param fromUser  发起转账的对象
+     * @param toUser  转账对象
+     * @param money  转账金额
+     * @return
+     */
+    public int userTransfer(User fromUser,User toUser,String money) {
+        toUser = userGetByAccount(toUser.getAccount());
+//        System.out.println(fromUser);
+//        System.out.println(toUser);
+//        System.out.println(money);
+
+        /**fromUser
+         * 1、减少自己的可用额度：  可用额度 - 转账金额
+         * 2、可取信用额度：  （可用额度 - 转账金额） / 1.1 向上取整
+         * 3、总信用额度： 总信用额 - 转账金额`
+         */
+        String fromUserSql = "update user set availableCredit=availableCredit-?,desirableCredit=?,totalCredit=totalCredit-? where account=?";
+        double ceil = Math.floor((Double.valueOf(fromUser.getAvailableCredit()) - Double.valueOf(money)) / 1.1);
+        int updateFromUser = userDAO.update(fromUserSql, money, String.valueOf(ceil), money, fromUser.getAccount());
+
+        /**toUser
+         * 1、增加自己的可用额度：  可用额度 + 转账金额
+         * 2、可取信用额度：  （可用额度 + 转账金额） / 1.1 向上取整
+         * 3、总信用额度： 总信用额 + 转账金额
+         */
+
+        String toUserSql = "update user set availableCredit=availableCredit+?,desirableCredit=?,totalCredit=totalCredit+? where account=?";
+        ceil = Math.floor((Double.valueOf(toUser.getAvailableCredit()) + Double.valueOf(money)) / 1.1);
+        int updateToUser = userDAO.update(toUserSql, money, String.valueOf(ceil), money, toUser.getAccount());
+        if (updateFromUser > 0 && updateToUser > 0) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+
+    }
+
+
     public int userStorageAmountCharge(User user,String money) {
 
-        String sql = "update user set storageAmount=storageAmount+? where account=?";
-        int update = userDAO.update(sql, money, user.getAccount());
+        String sql = "update user set storageAmount=storageAmount+?,totalCredit=totalCredit+? where account=?";
+        int update = userDAO.update(sql, money,money, user.getAccount());
         return update;
     }
 

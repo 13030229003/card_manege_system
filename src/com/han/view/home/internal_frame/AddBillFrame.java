@@ -1,7 +1,6 @@
 package com.han.view.home.internal_frame;
 
 import com.han.controller.BillController;
-import com.han.controller.UserController;
 import com.han.pojo.Bill;
 import com.han.pojo.User;
 import com.han.view.imagepanel.HomePanel;

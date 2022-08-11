@@ -53,7 +53,7 @@ public class AddCashBillFrame {
 						bill.setAccount(user.getAccount());
 						bill.setAmount(textField_add_bill.getText());
 						bill.setType("3");
-						bill = billController.billInsert(bill);
+						bill = billController.billInsert02(bill);
 
 						if (bill != null) {
 							bill.setStatus("1");

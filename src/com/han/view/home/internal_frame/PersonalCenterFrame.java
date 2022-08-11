@@ -1,15 +1,10 @@
 package com.han.view.home.internal_frame;
 
-import com.han.controller.BillController;
 import com.han.controller.UserController;
 import com.han.pojo.User;
 import com.han.view.imagepanel.HomePanel;
-import com.han.view.imagepanel.MyTable;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.awt.event.*;
 
 public class PersonalCenterFrame {
@@ -24,6 +19,9 @@ public class PersonalCenterFrame {
 	private static JTextField textField_total_credit;
 	private static JTextField textField_desirable_credit;
 	private static JTextField textField_arrears_amount;
+	private static JTextField textField_available_credit;
+
+
 	private static JTextField textField_storage_amount;
 	private static JTextField textField_add_storage_amount;
 
@@ -58,6 +56,7 @@ public class PersonalCenterFrame {
 							textField_add_storage_amount.setText("");
 							user = userController.userSelectByAccount(user);
 							textField_storage_amount.setText(user.getStorageAmount());
+							textField_total_credit.setText(user.getTotalCredit());
 						} else {
 							System.out.println("充值失败!!!");
 						}
@@ -112,7 +111,7 @@ public class PersonalCenterFrame {
 		panel_1.add(textField_account);
 
 
-		JLabel lblNewLabel_5 = new JLabel("预存金额充值：");
+		JLabel lblNewLabel_5 = new JLabel("预存金额：");
 		lblNewLabel_5.setBounds(504, 9, 200, 20);
 		panel_1.add(lblNewLabel_5);
 
@@ -123,7 +122,7 @@ public class PersonalCenterFrame {
 		panel_1.add(textField_add_storage_amount);
 
 		// 查询按钮
-		btn_add_storage_amount = new JButton("充值");
+		btn_add_storage_amount = new JButton("预存");
 		btn_add_storage_amount.setBounds(630, 50, 110, 30);
 		btn_add_storage_amount.setIcon(new ImageIcon("./images/垃圾查询_1.png"));
 		panel_1.add(btn_add_storage_amount);
@@ -139,7 +138,7 @@ public class PersonalCenterFrame {
 		panel_1.add(textField_total_credit);
 		textField_total_credit.setColumns(10);
 
-		JLabel lblNewLabel_2 = new JLabel("可取信用额：");
+		JLabel lblNewLabel_2 = new JLabel("可取现信用：");
 		lblNewLabel_2.setBounds(14, 107, 100, 18);
 		panel_1.add(lblNewLabel_2);
 
@@ -161,14 +160,29 @@ public class PersonalCenterFrame {
 		textField_arrears_amount.setColumns(10);
 		panel_1.add(textField_arrears_amount);
 
-		JLabel lblNewLabel_4 = new JLabel("预存金额：");
-		lblNewLabel_4.setBounds(14, 226, 100, 18);
+
+		JLabel lblNewLabel_4 = new JLabel("可用信用额：");
+		lblNewLabel_4.setBounds(14, 206, 100, 18);
 		panel_1.add(lblNewLabel_4);
+
+		textField_available_credit = new JTextField();
+		textField_available_credit.setText(user.getAvailableCredit());
+		textField_available_credit.setEditable(false);
+		textField_available_credit.setBounds(110, 203, 130, 24);
+		textField_available_credit.setColumns(10);
+		panel_1.add(textField_available_credit);
+
+
+
+
+		JLabel lblNewLabel_6 = new JLabel("预存金额：");
+		lblNewLabel_6.setBounds(14, 256, 100, 18);
+		panel_1.add(lblNewLabel_6);
 
 		textField_storage_amount = new JTextField();
 		textField_storage_amount.setText(user.getStorageAmount());
 		textField_storage_amount.setEditable(false);
-		textField_storage_amount.setBounds(110, 223, 130, 24);
+		textField_storage_amount.setBounds(110, 253, 130, 24);
 		textField_storage_amount.setColumns(10);
 		panel_1.add(textField_storage_amount);
 
